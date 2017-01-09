@@ -33,8 +33,6 @@ public class PicturePanel extends JPanel {
     public void repaint() {
         if(swapChain != null) {
             swapChain.swap();
-            System.out.println("Visisble = " + swapChain.getVisible().hashCode() +
-                    "  drawing " + swapChain.getDrawing().hashCode());
         }
         super.repaint();
 

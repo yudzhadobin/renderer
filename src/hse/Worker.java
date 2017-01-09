@@ -24,7 +24,6 @@ public class Worker {
         do {
             synchronized (lock) {
                 if(task != null) {
-                    System.out.println(SwapChain.getInstance().getDrawing().hashCode());
                     task.complete();
                 }
                 try {

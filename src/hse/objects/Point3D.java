@@ -11,10 +11,6 @@ public class Point3D<T extends Number> {
     T y;
     T z;
 
-    UvCoordinate uvCoordinate;
-
-    Normal normal;
-
     public Point3D() {
 
     }
@@ -29,25 +25,6 @@ public class Point3D<T extends Number> {
         this.x = a.x;
         this.y = a.y;
         this.z = a.z;
-
-        this.normal = a.getNormal();
-        this.uvCoordinate = a.getUvCoordinate();
-    }
-
-    public void setUvCoordinate(UvCoordinate uvCoordinate) {
-        this.uvCoordinate = uvCoordinate;
-    }
-
-    public void setNormal(Normal normal) {
-        this.normal = normal;
-    }
-
-    public Normal getNormal() {
-        return normal;
-    }
-
-    public UvCoordinate getUvCoordinate() {
-        return uvCoordinate;
     }
 
     public void swap(Point3D<T> another) {
@@ -62,14 +39,6 @@ public class Point3D<T extends Number> {
         sup = z;
         z = another.z;
         another.z = sup;
-        UvCoordinate b = another.getUvCoordinate();
-        this.setUvCoordinate(another.getUvCoordinate());
-        another.setUvCoordinate(b);
-
-        Normal normal = another.normal;
-        this.normal = another.normal;
-        another.normal = normal;
-
     }
 
     public T getX() {

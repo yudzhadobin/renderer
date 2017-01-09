@@ -36,7 +36,7 @@ public class ZBuffer  {
 
 
 
-    public synchronized void set(int i, int j, int value) {
+    public void set(int i, int j, int value) {
         matrix.get(i).set(j, value);
     }
 

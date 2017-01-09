@@ -55,7 +55,6 @@ public class Master {
     }
 
     void generateTasks() {
-        int z = 0;
         boolean isFirst = true;
         do {
             synchronized (taskThreadLock) {
@@ -78,13 +77,11 @@ public class Master {
     }
 
     void swap() {
-        int z = 0;
         do {
             synchronized (swapThreadLock) {
 
                 currentTasks = nextTasks;
                 nextTasks = new ArrayList<>();// TODO: 05.01.2017 rewrite
-                //System.out.println("swapping");
                 synchronized (taskThreadLock) {
                     taskThreadLock.notify();
                 }
@@ -104,14 +101,13 @@ public class Master {
                     }
 
                     if(flag) {
-                     //   System.out.println("repaint");
                         form.picturePanel.repaint();
                         ZBuffer.getBuffer().clear();
+                        object3D.clear();
                         break;
                     } else {
                         try {
-                   //         System.out.println("waiting");
-                            Thread.currentThread().sleep(30);
+                            Thread.currentThread().sleep(20);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -126,9 +122,6 @@ public class Master {
                     e.printStackTrace();
                 }
             }
-//            if(z++ == 3) {
-//                break;
-//            }
         } while (true);
     }
 
@@ -143,18 +136,9 @@ public class Master {
             nextTasks.add(new Task(conversations, object3D));
         }
 
-        for (int i = 0; i < object3D.getLocalPoints().size(); i++) {
-            if(object3D.getLocalPoints().get(i).getUvCoordinate() == null) {
-                int j =5 ;
-            }
-        }
         for (int i = 0; i < object3D.getSides().size(); i++) {
             Side curSide = object3D.getSides().get(i);
             nextTasks.get(i % WORKERS_COUNT).addSide(curSide);
-            for (int j = 0; j < curSide.getIndexes().size(); j++) {
-                int index = curSide.getIndexes().get(j);
-                nextTasks.get(i % WORKERS_COUNT).addPoint(index, object3D.getLocalPoints().get(index));
-            }
         }
 
 

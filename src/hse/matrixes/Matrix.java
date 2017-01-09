@@ -52,10 +52,13 @@ public class Matrix {
         sub = matrix.get(2);
         result.setZ((point.getX() * sub.get(0) + point.getY() * sub.get(1) + point.getZ() * sub.get(2) + 1 * sub.get(3)));
 
-
-        result.setUvCoordinate(point.getUvCoordinate());
         return result;
+    }
 
+    public void multipleInPlace(Point3D<Double> point) {
+        Point3D<Double> result = multiple(point);
+
+        point.swap(result);
     }
 
     public Matrix multiple(Matrix matrix) {

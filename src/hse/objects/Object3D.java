@@ -6,7 +6,7 @@ import hse.matrixes.Matrix;
 import hse.matrixes.Projections;
 import hse.matrixes.conversations.Scale;
 import hse.ui.SwapChain;
-import javafx.beans.binding.DoubleExpression;
+import javafx.util.Pair;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -14,15 +14,19 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.ProviderMismatchException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Created by Yura on 01.01.2017.
  */
 public class Object3D {
     List<Point3D<Double>> localPoints;
+
+    Map<Point3D<Double>,Pair<ChangeableSupplier<Boolean>, Point3D<Double>>> transformedPoints;
     List<Side> sides;
 
     Point3D position;
@@ -39,7 +43,7 @@ public class Object3D {
     public Object3D() {
         localPoints = new ArrayList<>();
         sides = new ArrayList<>();
-
+        transformedPoints = new HashMap<>();
 
         try {
            texture = TGALoader.getImage("./models/head.tga"); // TODO: 07.01.2017 rewrite
@@ -63,11 +67,19 @@ public class Object3D {
 
                 switch (parts[0]) {
                     case "v":
-                        result.localPoints.add(new Point3D<>(
+                        Point3D<Double> point3D = new Point3D<>(
                                 Double.parseDouble(parts[1]),
                                 Double.parseDouble(parts[2]),
                                 Double.parseDouble(parts[3])
-                        ));
+                        );
+
+                        result.localPoints.add(point3D);
+                        result.transformedPoints.put(
+                                point3D, new Pair<> (
+                                        new ChangeableSupplier<Boolean>(false),
+                                        new Point3D<>(point3D)
+                                )
+                        );
                         break;
 
                     case "vn":
@@ -79,38 +91,54 @@ public class Object3D {
                         break;
 
                     case "f":
-
-
-                        result.sides.addAll(Side.create(
-                                new ArrayList<Integer>() {
-                                    {
-                                        for (int i = 1; i < parts.length; i++) {
-                                            add(Integer.parseInt(parts[i].split("/")[0]) - 1);
-                                        }
-                                    }
-                                }
-                        ));
-
-                        UvCoordinate was = null;
-                        int index = -1;
-                        for (int i = 1; i < parts.length; i++) {
-                            if(result.localPoints.get(Integer.parseInt(parts[i].split("/")[0]) - 1).getUvCoordinate() != null) {
-                                 was = result.localPoints.get(Integer.parseInt(parts[i].split("/")[0]) - 1).getUvCoordinate();
-                                index = i;
-                            }
-                            result.localPoints.get(Integer.parseInt(parts[i].split("/")[0]) - 1).
-                                    setNormal(normals.get(Integer.parseInt(parts[i].split("/")[1])-1));
-                        }
+                        List<PointInfo> pointInfos = new ArrayList<>();
 
                         for (int i = 1; i < parts.length; i++) {
-                            result.localPoints.get(Integer.parseInt(parts[i].split("/")[0]) - 1).
-                                    setUvCoordinate(uvCoordinates.get(Integer.parseInt(parts[i].split("/")[1])-1));
+
+                            String[] infos = parts[i].split("/");
+
+
+                            pointInfos.add(new PointInfo(
+                                    result.transformedPoints.get(
+                                            result.localPoints.get(Integer.parseInt(infos[0]) - 1)
+                                    ).getValue(),
+                                    uvCoordinates.get(Integer.parseInt(infos[1]) - 1),
+                                    normals.get(Integer.parseInt(infos[2]) - 1),
+                                    Integer.parseInt(infos[0]) - 1
+                            ));
                         }
-                        if(index != -1) {
-                            if (!was.equals(result.localPoints.get(Integer.parseInt(parts[index].split("/")[0]) - 1).getUvCoordinate())) {
-                                int j = 5;
-                            }
-                        }
+                        result.sides.add(new Side(pointInfos));
+//                        //заполняем грани
+//                        result.sides.addAll(Side.create(
+//                                new ArrayList<Integer>() {
+//                                    {
+//                                        for (int i = 1; i < parts.length; i++) {
+//                                            add(Integer.parseInt(parts[i].split("/")[0]) - 1);
+//                                        }
+//                                    }
+//                                }
+//                        ));
+//
+//                        UvCoordinate was = null;
+//                        int index = -1;
+//                        for (int i = 1; i < parts.length; i++) {
+//                            if(result.localPoints.get(Integer.parseInt(parts[i].split("/")[0]) - 1).getUvCoordinate() != null) {
+//                                 was = result.localPoints.get(Integer.parseInt(parts[i].split("/")[0]) - 1).getUvCoordinate();
+//                                index = i;
+//                            }
+//                            result.localPoints.get(Integer.parseInt(parts[i].split("/")[0]) - 1).
+//                                    setNormal(normals.get(Integer.parseInt(parts[i].split("/")[1])-1));
+//                        }
+//
+//                        for (int i = 1; i < parts.length; i++) {
+//                            result.localPoints.get(Integer.parseInt(parts[i].split("/")[0]) - 1).
+//                                    setUvCoordinate(uvCoordinates.get(Integer.parseInt(parts[i].split("/")[1])-1));
+//                        }
+//                        if(index != -1) {
+//                            if (!was.equals(result.localPoints.get(Integer.parseInt(parts[index].split("/")[0]) - 1).getUvCoordinate())) {
+//                                int j = 5;
+//                            }
+//                        }
 
                         break;
 
@@ -134,6 +162,7 @@ public class Object3D {
         }
     }
 
+    @Deprecated()
     public void draw() {
         Matrix scale = new Scale();
 
@@ -145,7 +174,7 @@ public class Object3D {
 
         for (int i = 0; i < sides.size(); i++) {
             Side side = sides.get(i);
-            side.drawContour(SwapChain.getInstance(), transformedPoints, Projections.ORTHOGONAL);
+            side.drawContour(SwapChain.getInstance(), Projections.ORTHOGONAL);
         }
     //    SwapChain.getInstance().swap();
     }
@@ -154,7 +183,19 @@ public class Object3D {
         return localPoints;
     }
 
+    public Map<Point3D<Double>, Pair<ChangeableSupplier<Boolean>, Point3D<Double>>> getTransformedPoints() {
+        return transformedPoints;
+    }
+
     public List<Side> getSides() {
         return sides;
+    }
+
+    public void clear() {
+        transformedPoints.forEach(
+                (point3D, changeableSupplierPoint3DPair) -> {
+                    transformedPoints.get(point3D).getKey().set(false);
+                }
+        );
     }
 }
