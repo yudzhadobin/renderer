@@ -2,6 +2,7 @@ package hse.matrixes;
 
 import hse.objects.Point3D;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,6 +80,21 @@ public class Matrix {
         return result;
     }
 
+
+    public Point3D<Integer> multipleInteger(Point3D<Integer> point) {
+        Point3D<Integer> result = new Point3D();
+        List<Double> sub = matrix.get(0);
+        result.setX((int)(point.getX() * sub.get(0) + point.getY() * sub.get(1) + point.getZ() * sub.get(2) + 1 * sub.get(3)));
+
+        sub = matrix.get(1);
+        result.setY((int)(point.getX() * sub.get(0) + point.getY() * sub.get(1) + point.getZ() * sub.get(2) + 1 * sub.get(3)));
+
+        sub = matrix.get(2);
+        result.setZ((int)(point.getX() * sub.get(0) + point.getY() * sub.get(1) + point.getZ() * sub.get(2) + 1 * sub.get(3)));
+
+        return result;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -91,4 +107,6 @@ public class Matrix {
         }
         return builder.toString();
     }
+
+
 }

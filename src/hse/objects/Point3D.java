@@ -2,6 +2,8 @@ package hse.objects;
 
 import hse.UvCoordinate;
 
+import java.awt.*;
+
 /**
  * Created by Yura on 01.01.2017.
  */
@@ -64,7 +66,6 @@ public class Point3D<T extends Number> {
     public void setZ(T z) {
         this.z = z;
     }
-
 
     @Override
     public boolean equals(Object o) {

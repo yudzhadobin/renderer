@@ -1,5 +1,6 @@
 package hse.ui;
 
+import com.sun.scenario.Settings;
 import hse.Setings;
 
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 import java.util.Hashtable;
+import java.util.Set;
 
 /**
  * Created by Yura on 25.12.2016.
@@ -31,13 +33,11 @@ public class SwapChain {
     }
 
     public void swap() {
-        if(!isEqual()) {
-            System.out.println("RASSINGHOR");
-        }
+
         BufferedImage sup = visible;
         visible = drawing;
         drawing = sup;
-   //     drawing.getGraphics().clearRect(0,0, 720, 720);
+        drawing.getGraphics().clearRect(0,0, Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT);
     }
 
     public BufferedImage getVisible() {
@@ -60,12 +60,12 @@ public class SwapChain {
     }
 
     private void initVisible() {
-        visible = new BufferedImage(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
+        visible = new MyBufferedImage(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
 
     }
 
     private void initDrawing() {
-        drawing = new BufferedImage(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
+        drawing = new MyBufferedImage(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
 
 
     }
@@ -103,4 +103,26 @@ public class SwapChain {
         }
         return image;
     }
+}
+
+
+class MyBufferedImage extends BufferedImage{
+
+    public MyBufferedImage(int width, int height, int imageType) {
+        super(width, height, imageType);
+    }
+
+    public MyBufferedImage(int width, int height, int imageType, IndexColorModel cm) {
+        super(width, height, imageType, cm);
+    }
+
+    public MyBufferedImage(ColorModel cm, WritableRaster raster, boolean isRasterPremultiplied, Hashtable<?, ?> properties) {
+        super(cm, raster, isRasterPremultiplied, properties);
+    }
+
+    @Override
+    public void setRGB(int x, int y, int rgb) {
+        super.setRGB(x, y, rgb);
+    }
+
 }

@@ -2,6 +2,7 @@ package hse;
 
 import com.sun.org.apache.xerces.internal.impl.dv.xs.DoubleDV;
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import hse.light.FillType;
 import hse.matrixes.Matrix;
 import hse.matrixes.Projections;
 import hse.objects.ChangeableSupplier;
@@ -24,6 +25,8 @@ import java.util.function.Supplier;
  */
 public class Task {
 
+    long time;
+
     List<Side> sidesToDraw = new ArrayList<>();
 
     TaskStatus status = TaskStatus.WAITING;
@@ -32,7 +35,7 @@ public class Task {
 
     Matrix conversation;
 
-
+    FillType fillType;
 
     public void setSidesToDraw(List<Side> sidesToDraw) {
         this.sidesToDraw = sidesToDraw;
@@ -43,12 +46,14 @@ public class Task {
         sidesToDraw.add(side);
     }
 
-    public Task(Matrix conversation, Object3D object3D) {
+    public Task(Matrix conversation, Object3D object3D, FillType fillType) {
         this.conversation = conversation;
         this.object3D = object3D;
+        this.fillType = fillType;
     }
 
     public void complete() {
+        time = System.currentTimeMillis();
         status = TaskStatus.WORKING;
 
         sidesToDraw.forEach(
@@ -71,10 +76,17 @@ public class Task {
         );
 
         for (Side side : sidesToDraw) {
-            side.drawTextured(SwapChain.getInstance(), Projections.PERSPECTIVE, object3D);
+            side.drawTextured(SwapChain.getInstance(), Projections.PERSPECTIVE, object3D, fillType);
         }
 
         status = TaskStatus.FINISHED;
+        time = System.currentTimeMillis() - time;
+
+    }
+
+
+    public long getTime() {
+        return time;
     }
 
     @Override

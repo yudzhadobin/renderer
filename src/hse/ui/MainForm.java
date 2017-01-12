@@ -20,7 +20,7 @@ public class MainForm extends JFrame {
 
         this.setSize(new Dimension(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT));
 
-
+        this.setResizable(false);
         picturePanel = new PicturePanel();
         picturePanel.validate();
         picturePanel.setVisible(true);

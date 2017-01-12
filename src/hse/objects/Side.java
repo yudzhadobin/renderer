@@ -1,19 +1,15 @@
 package hse.objects;
 
-import com.sun.prism.sw.SWPipeline;
 import hse.UvCoordinate;
 import hse.ZBuffer;
+import hse.light.FillType;
+import hse.light.SimpleIntensity;
 import hse.matrixes.Matrix;
-import hse.matrixes.Projections;
 import hse.ui.SwapChain;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.DoubleSummaryStatistics;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Yura on 01.01.2017.
@@ -104,7 +100,7 @@ public class Side {
 
         int totalHeight = c.y - a.y;
 
-        double intensity = this.calculateSideIntensity();
+        double intensity = SimpleIntensity.calculateIntensity(this);
 
 
         Color color = new Color((int) (255 * intensity), (int) (255 * intensity),
@@ -162,8 +158,26 @@ public class Side {
     }
 
 
+
     @SuppressWarnings("unchecked")
-    public void drawTextured(SwapChain swapChain, Matrix projection, Object3D object) {
+    public void drawTextured(SwapChain swapChain, Matrix projection, Object3D object, FillType fillType) {
+        switch (fillType) {
+            case ORDINAL:
+                drawTexturedOrdinal(swapChain, projection, object);
+                break;
+            case GURO:
+                drawTexturedGuro(swapChain, projection, object);
+                break;
+            case FONG:
+                drawTexturedFong(swapChain, projection, object);
+                break;
+        }
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    public void drawTexturedOrdinal(SwapChain swapChain, Matrix projection, Object3D object) {
         BufferedImage drawingPanel = swapChain.getDrawing();
 
 
@@ -194,7 +208,7 @@ public class Side {
 
         int totalHeight = c.y - a.y;
 
-        double intensity = this.calculateSideIntensity();
+        double intensity = SimpleIntensity.calculateIntensity(this);
         if (intensity < 0) {
             return;
         }
@@ -257,9 +271,262 @@ public class Side {
                 point.x += 600;
                 point.y = 500 - point.y;
                 if (ZBuffer.getBuffer().get(point.x, point.y) < point.z) {
-
                     ZBuffer.getBuffer().set(point.x, point.y, point.z);
                     drawingPanel.setRGB(point.x, point.y, getRGB(intensity, object.getTexture()
+                            .getRGB(uvPoint.getX(), uvPoint.getY())));
+
+                }
+
+
+            }
+        }
+
+
+    }
+
+    @SuppressWarnings("unchecked")
+    public void drawTexturedGuro(SwapChain swapChain, Matrix projection, Object3D object) {
+        BufferedImage drawingPanel = swapChain.getDrawing();
+
+
+        Point3D<Integer> a = transform(pointsInfo.get(0).point);
+        Point3D<Integer> b = transform(pointsInfo.get(1).point);
+        Point3D<Integer> c = transform(pointsInfo.get(2).point);
+
+        PointInfo aInfo = pointsInfo.get(0);
+        PointInfo bInfo = pointsInfo.get(1);
+        PointInfo cInfo = pointsInfo.get(2);
+
+        UvCoordinate aUv = new UvCoordinate(aInfo.getUvCoordinates());
+        UvCoordinate bUv = new UvCoordinate(bInfo.getUvCoordinates());
+        UvCoordinate cUv = new UvCoordinate(cInfo.getUvCoordinates());
+
+        double aIntensity = SimpleIntensity.calculateIntensity(aInfo.normal);
+        double bIntensity = SimpleIntensity.calculateIntensity(bInfo.normal);
+        double cIntensity = SimpleIntensity.calculateIntensity(cInfo.normal);
+
+        if (a.y > b.y) {
+            a.swap(b);
+            aUv.swap(bUv);
+            double sup = aIntensity;
+            aIntensity = bIntensity;
+            bIntensity = sup;
+        }
+        if (a.y > c.y) {
+            a.swap(c);
+            aUv.swap(cUv);
+
+            double sup = aIntensity;
+            aIntensity = cIntensity;
+            cIntensity = sup;
+
+        }
+        if (b.y > c.y) {
+            b.swap(c);
+            bUv.swap(cUv);
+
+            double sup = bIntensity;
+            bIntensity = cIntensity;
+            cIntensity = sup;
+
+        }
+
+        int totalHeight = c.y - a.y;
+
+        for (int i = 0; i < totalHeight; i++) {
+            boolean secondHalf = (i > (b.y - a.y)) || (b.y.equals(a.y));
+            int segmentHeight = secondHalf ? c.y - b.y : b.y - a.y;
+
+            double alpha = (double) i / totalHeight;
+            double beta = (double) (i - (secondHalf ? b.y - a.y : 0)) / segmentHeight;
+            Point3D<Integer> A = new Point3D<>(a);
+
+            A.x += round((c.x - a.x) * alpha);
+            A.y += round((c.y - a.y) * alpha);
+            A.z += round((c.z - a.z) * alpha);
+
+            UvCoordinate uvPointA = new UvCoordinate(
+                    (int) (aUv.getX() + (cUv.getX() - aUv.getX()) * alpha),
+                    (int) (aUv.getY() + (cUv.getY() - aUv.getY()) * alpha),
+                    0
+            );
+
+            double intensityA = aIntensity + (cIntensity - aIntensity) * alpha;
+
+            Point3D<Integer> B = secondHalf ? new Point3D<>(b) : new Point3D<>(a);
+            B.x += round(secondHalf ? (c.x - b.x) * beta : (b.x - a.x) * beta);
+            B.y += round(secondHalf ? (c.y - b.y) * beta : (b.y - a.y) * beta);
+            B.z += round(secondHalf ? (c.z - b.z) * beta : (b.z - a.z) * beta);
+
+            UvCoordinate uvPointB = new UvCoordinate(
+                    (int) (secondHalf ? bUv.getX() + (cUv.getX() - bUv.getX()) * beta
+                            : aUv.getX() + (bUv.getX() - aUv.getX()) * beta),
+                    (int) (secondHalf ? bUv.getY() + (cUv.getY() - bUv.getY()) * beta
+                            : aUv.getY() + (bUv.getY() - aUv.getY()) * beta),
+                    0
+            );
+
+            double intensityB = secondHalf ? bIntensity + (cIntensity - bIntensity) * beta
+                    : aIntensity + (bIntensity - aIntensity) * beta;
+
+            if (A.x > B.x) {
+                A.swap(B);
+                uvPointA.swap(uvPointB);
+
+                double sup = intensityB;
+                intensityB = intensityA;
+                intensityA = sup;
+
+            }
+
+            for (int j = A.x; j <= B.x; j++) {
+
+
+                double phi = B.x.equals(A.x) ? 1 : (double) (j - A.x) / (double) (B.x - A.x);
+
+                Point3D<Integer> point = new Point3D<>(A);
+
+                point.x += round((B.x - A.x) * phi);
+                point.y += round((B.y - A.y) * phi);
+                point.z += round((B.z - A.z) * phi);
+
+                UvCoordinate uvPoint = new UvCoordinate(
+                        (int) (uvPointA.getX() + (uvPointB.getX() - uvPointA.getX()) * phi),
+                        (int) (uvPointA.getY() + (uvPointB.getY() - uvPointA.getY()) * phi),
+                        0
+                );
+
+                double pointIntensity = intensityA + (intensityB - intensityA) * phi;
+                int savedZ = point.z;
+                point = projection.multipleInteger(point);
+                point.x += 600;
+                point.y = 500 - point.y;
+                if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
+                    ZBuffer.getBuffer().set(point.x, point.y, savedZ);
+                    drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
+                            .getRGB(uvPoint.getX(), uvPoint.getY())));
+
+                }
+
+
+            }
+        }
+
+
+    }
+
+    @SuppressWarnings("unchecked")
+    public void drawTexturedFong(SwapChain swapChain, Matrix projection, Object3D object) {
+        BufferedImage drawingPanel = swapChain.getDrawing();
+
+
+        Point3D<Integer> a = transform(pointsInfo.get(0).point);
+        Point3D<Integer> b = transform(pointsInfo.get(1).point);
+        Point3D<Integer> c = transform(pointsInfo.get(2).point);
+
+        PointInfo aInfo = pointsInfo.get(0);
+        PointInfo bInfo = pointsInfo.get(1);
+        PointInfo cInfo = pointsInfo.get(2);
+
+        UvCoordinate aUv = new UvCoordinate(aInfo.getUvCoordinates());
+        UvCoordinate bUv = new UvCoordinate(bInfo.getUvCoordinates());
+        UvCoordinate cUv = new UvCoordinate(cInfo.getUvCoordinates());
+
+        Normal aNormal = aInfo.normal.copy();
+        Normal bNormal = bInfo.normal.copy();
+        Normal cNormal = cInfo.normal.copy();
+
+        if (a.y > b.y) {
+            a.swap(b);
+            aUv.swap(bUv);
+            aNormal.swap(bNormal);
+
+
+        }
+        if (a.y > c.y) {
+            a.swap(c);
+            aUv.swap(cUv);
+
+            aNormal.swap(cNormal);
+
+        }
+        if (b.y > c.y) {
+            b.swap(c);
+            bUv.swap(cUv);
+
+            bNormal.swap(cNormal);
+        }
+
+        int totalHeight = c.y - a.y;
+
+        for (int i = 0; i < totalHeight; i++) {
+            boolean secondHalf = (i > (b.y - a.y)) || (b.y.equals(a.y));
+            int segmentHeight = secondHalf ? c.y - b.y : b.y - a.y;
+
+            double alpha = (double) i / totalHeight;
+            double beta = (double) (i - (secondHalf ? b.y - a.y : 0)) / segmentHeight;
+            Point3D<Integer> A = new Point3D<>(a);
+
+            A.x += round((c.x - a.x) * alpha);
+            A.y += round((c.y - a.y) * alpha);
+            A.z += round((c.z - a.z) * alpha);
+
+            UvCoordinate uvPointA = new UvCoordinate(
+                    (int) (aUv.getX() + (cUv.getX() - aUv.getX()) * alpha),
+                    (int) (aUv.getY() + (cUv.getY() - aUv.getY()) * alpha),
+                    0
+            );
+
+            Normal normalA = (new Normal()).plus(aNormal).plus((cNormal.minus(aNormal).multiple(alpha)));
+            Point3D<Integer> B = secondHalf ? new Point3D<>(b) : new Point3D<>(a);
+            B.x += round(secondHalf ? (c.x - b.x) * beta : (b.x - a.x) * beta);
+            B.y += round(secondHalf ? (c.y - b.y) * beta : (b.y - a.y) * beta);
+            B.z += round(secondHalf ? (c.z - b.z) * beta : (b.z - a.z) * beta);
+
+            UvCoordinate uvPointB = new UvCoordinate(
+                    (int) (secondHalf ? bUv.getX() + (cUv.getX() - bUv.getX()) * beta
+                            : aUv.getX() + (bUv.getX() - aUv.getX()) * beta),
+                    (int) (secondHalf ? bUv.getY() + (cUv.getY() - bUv.getY()) * beta
+                            : aUv.getY() + (bUv.getY() - aUv.getY()) * beta),
+                    0
+            );
+
+            Normal normalB = new Normal().plus( secondHalf ? bNormal.plus((cNormal.minus(bNormal).multiple(beta)))
+                    : aNormal.plus((bNormal.minus(aNormal).multiple(beta))));
+            if (A.x > B.x) {
+                A.swap(B);
+                uvPointA.swap(uvPointB);
+
+               normalA.swap(normalB);
+
+            }
+
+            for (int j = A.x; j <= B.x; j++) {
+
+
+                double phi = B.x.equals(A.x) ? 1 : (double) (j - A.x) / (double) (B.x - A.x);
+
+                Point3D<Integer> point = new Point3D<>(A);
+
+                point.x += round((B.x - A.x) * phi);
+                point.y += round((B.y - A.y) * phi);
+                point.z += round((B.z - A.z) * phi);
+
+                UvCoordinate uvPoint = new UvCoordinate(
+                        (int) (uvPointA.getX() + (uvPointB.getX() - uvPointA.getX()) * phi),
+                        (int) (uvPointA.getY() + (uvPointB.getY() - uvPointA.getY()) * phi),
+                        0
+                );
+
+                double pointIntensity = SimpleIntensity.calculateIntensity(new Normal().plus(
+                        normalA.plus((normalB.minus(normalA).multiple(phi)))));
+                int savedZ = point.z;
+                point = projection.multipleInteger(point);
+                point.x += 600;
+                point.y = 500 - point.y;
+                if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
+                    ZBuffer.getBuffer().set(point.x, point.y, savedZ);
+                    drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
                             .getRGB(uvPoint.getX(), uvPoint.getY())));
 
                 }
@@ -303,31 +570,7 @@ public class Side {
         return result;
     }
 
-    private double calculateSideIntensity() {
-        Normal normal = new Normal();
-        normal.setX(
-                (pointsInfo.get(0).getNormal().x +
-                        pointsInfo.get(1).getNormal().x +
-                        pointsInfo.get(2).getNormal().x) / 3
-        );
-        normal.setY(
-                (pointsInfo.get(0).getNormal().y +
-                        pointsInfo.get(1).getNormal().y +
-                        pointsInfo.get(2).getNormal().y) / 3
-        );
-        normal.setZ(
-                (pointsInfo.get(0).getNormal().z +
-                        pointsInfo.get(1).getNormal().z +
-                        pointsInfo.get(2).getNormal().z) / 3
-        );
 
-        double cos = (normal.x * light_x + normal.y * light_y + normal.z * light_z) / (Math.sqrt(Math.pow(normal.x, 2)
-                + Math.pow(normal.y, 2) + Math.pow(normal.z, 2)) * Math.sqrt(Math.pow(light_x, 2) + Math.pow(light_y, 2) + Math.pow(light_z, 2)));
-        cos = Math.abs(cos);
-
-        double res = (0.5 * 0.2 + lightIntensity * diffuseReflectionCoef * cos);
-        return res > 1 ? 1 : res;
-    }
 
 }
 

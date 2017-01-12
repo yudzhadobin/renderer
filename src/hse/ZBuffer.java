@@ -46,7 +46,7 @@ public class ZBuffer  {
 
 
     public BufferedImage toBufferedImage() {
-        BufferedImage image = new BufferedImage(720, 720, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
         for (int i = 0; i < Setings.WINDOW_WIDTH; i++) {
             for (int j = 0; j < Setings.WINDOW_HEIGHT; j++) {
                 if(this.get(i, j ) != Integer.MIN_VALUE) {

@@ -17,6 +17,17 @@ public class RotationX extends Matrix{
         set(3, 3, 1);
     }
 
+    public RotationX(int angle) {
+        super(4, 4);
+
+        set(0, 0, 1);
+
+        setAngle(angle * Math.PI / 180 );
+
+        set(3, 3, 1);
+    }
+
+
     public void setAngle(double phi) {
         set(1, 1, Math.cos(phi));
         set(1, 2, -Math.sin(phi));

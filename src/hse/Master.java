@@ -1,5 +1,6 @@
 package hse;
 
+import hse.light.FillType;
 import hse.matrixes.Matrix;
 import hse.matrixes.conversations.RotationX;
 import hse.matrixes.conversations.RotationY;
@@ -22,7 +23,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Master {
 
 
-    public static final int WORKERS_COUNT = 1;
+    public static final int WORKERS_COUNT = 32;
 
     Object3D object3D;
     List<Worker> workers = new ArrayList<>();
@@ -101,13 +102,18 @@ public class Master {
                     }
 
                     if(flag) {
+                        int totalTime = 0;
+                        for (int i = 0; i < currentTasks.size(); i++) {
+                            totalTime += currentTasks.get(i).getTime();
+                        }
+                        System.out.println(totalTime / currentTasks.size());
                         form.picturePanel.repaint();
                         ZBuffer.getBuffer().clear();
                         object3D.clear();
                         break;
                     } else {
                         try {
-                            Thread.currentThread().sleep(20);
+                            Thread.currentThread().sleep(5);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -125,15 +131,16 @@ public class Master {
         } while (true);
     }
 
+    int rotate = 0;
     private void createTasks() {
-        Matrix a = new RotationX();
+        Matrix a = new RotationX(rotate++);
 
         Matrix b = new RotationY();
 
-        Matrix conversations = new Scale(500);
+        Matrix conversations =  new Scale(450);//a.multiple(b).multiple(new Scale(450));
 
         for (int i = 0; i < WORKERS_COUNT; i++) {
-            nextTasks.add(new Task(conversations, object3D));
+            nextTasks.add(new Task(conversations, object3D, FillType.GURO));
         }
 
         for (int i = 0; i < object3D.getSides().size(); i++) {
