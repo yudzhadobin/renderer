@@ -1,23 +1,26 @@
 package hse.ui;
 
 import hse.Setings;
-import hse.Task;
-import hse.ZBuffer;
-import hse.matrixes.Matrix;
-import hse.matrixes.conversations.RotationX;
-import hse.matrixes.conversations.RotationY;
-import hse.matrixes.conversations.Scale;
+
 import hse.objects.Object3D;
+import hse.objects.Point3D;
 
 import javax.swing.*;
 import java.awt.*;
-import java.nio.file.Paths;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Yura on 25.12.2016.
  */
 public class PicturePanel extends JPanel {
     SwapChain swapChain;
+
+    List<Object3D> drawedObjects =  new ArrayList<>();
+
 
     public PicturePanel() {
         super();
@@ -26,6 +29,25 @@ public class PicturePanel extends JPanel {
         this.setSize(new Dimension(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT));
 
         this.setVisible(true);
+
+        this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Point3D<Integer> point3D = new Point3D<Integer>(
+                        e.getX(),
+                        e.getY(),
+                        0
+                );
+                for (Object3D drawedObject : drawedObjects) {
+                    if(drawedObject.getBox().isIn(point3D)) {
+                        EventQueue.invokeLater(() -> {
+                            SettingsForm form = new SettingsForm(drawedObject);
+                            form.setVisible(true);
+                        });
+                    }
+                }
+            }
+        });
     }
 
 

@@ -274,7 +274,7 @@ public class Side {
                     ZBuffer.getBuffer().set(point.x, point.y, point.z);
                     drawingPanel.setRGB(point.x, point.y, getRGB(intensity, object.getTexture()
                             .getRGB(uvPoint.getX(), uvPoint.getY())));
-
+                    object.box.extend(point);
                 }
 
 
@@ -405,6 +405,8 @@ public class Side {
                     ZBuffer.getBuffer().set(point.x, point.y, savedZ);
                     drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
                             .getRGB(uvPoint.getX(), uvPoint.getY())));
+                    object.box.extend(point);
+
 
                 }
 
@@ -528,6 +530,7 @@ public class Side {
                     ZBuffer.getBuffer().set(point.x, point.y, savedZ);
                     drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
                             .getRGB(uvPoint.getX(), uvPoint.getY())));
+                    object.box.extend(point);
 
                 }
 

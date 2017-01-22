@@ -29,11 +29,26 @@ public class Object3D {
     Map<Point3D<Double>,Pair<ChangeableSupplier<Boolean>, Point3D<Double>>> transformedPoints;
     List<Side> sides;
 
+
+    List<Integer> rotations = new ArrayList<Integer>() {
+        {
+            add(0);
+            add(0);
+            add(0);
+        }
+    };
+
     Point3D position;
     BufferedImage texture;
 
+    BoundingBox box = new BoundingBox();
+
     public void setTexture(BufferedImage texture) {
         this.texture = texture;
+    }
+
+    public BoundingBox getBox() {
+        return box;
     }
 
     public BufferedImage getTexture() {
@@ -92,7 +107,6 @@ public class Object3D {
 
                     case "f":
                         List<PointInfo> pointInfos = new ArrayList<>();
-
                         for (int i = 1; i < parts.length; i++) {
 
                             String[] infos = parts[i].split("/");
@@ -197,5 +211,31 @@ public class Object3D {
                     transformedPoints.get(point3D).getKey().set(false);
                 }
         );
+        box.clear();
+    }
+
+
+    public void setXRotation(int x) {
+        this.rotations.set(0, x);
+    }
+
+    public void setYRotation(int y) {
+        this.rotations.set(1, y);
+    }
+
+    public void setZRotation(int z) {
+        this.rotations.set(2, z);
+    }
+
+    public int getXRotation() {
+        return rotations.get(0);
+    }
+
+    public int getYRotation() {
+        return rotations.get(1);
+    }
+
+    public int getZRotation() {
+        return rotations.get(2);
     }
 }

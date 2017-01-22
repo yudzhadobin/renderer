@@ -1,6 +1,7 @@
 package hse.ui;
 
 import hse.Setings;
+import hse.objects.Object3D;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +27,11 @@ public class MainForm extends JFrame {
         picturePanel.setVisible(true);
         this.getContentPane().add(picturePanel);
 
+    }
+
+
+    public void addObject(Object3D object3D) {
+        picturePanel.drawedObjects.add(object3D);
     }
 
     @Override

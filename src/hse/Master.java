@@ -4,10 +4,12 @@ import hse.light.FillType;
 import hse.matrixes.Matrix;
 import hse.matrixes.conversations.RotationX;
 import hse.matrixes.conversations.RotationY;
+import hse.matrixes.conversations.RotationZ;
 import hse.matrixes.conversations.Scale;
 import hse.objects.Object3D;
 import hse.objects.Side;
 import hse.ui.MainForm;
+import hse.ui.SwapChain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Master {
 
 
-    public static final int WORKERS_COUNT = 32;
+    public static final int WORKERS_COUNT = 3;
 
     Object3D object3D;
     List<Worker> workers = new ArrayList<>();
@@ -102,11 +104,12 @@ public class Master {
                     }
 
                     if(flag) {
-                        int totalTime = 0;
+                        object3D.getBox().draw(SwapChain.getInstance());
+                        long maxTime = -10;
                         for (int i = 0; i < currentTasks.size(); i++) {
-                            totalTime += currentTasks.get(i).getTime();
+                            maxTime = currentTasks.get(i).getTime() > maxTime ? currentTasks.get(i).getTime() : maxTime;
                         }
-                        System.out.println(totalTime / currentTasks.size());
+                        System.out.println(maxTime);
                         form.picturePanel.repaint();
                         ZBuffer.getBuffer().clear();
                         object3D.clear();
@@ -131,13 +134,15 @@ public class Master {
         } while (true);
     }
 
-    int rotate = 0;
+//    int rotate = 0;
     private void createTasks() {
-        Matrix a = new RotationX(rotate++);
+        Matrix a = new RotationX(object3D.getXRotation());
 
-        Matrix b = new RotationY();
+        Matrix b = new RotationY(object3D.getYRotation());
+        Matrix c = new RotationZ(object3D.getZRotation());
 
-        Matrix conversations =  new Scale(450);//a.multiple(b).multiple(new Scale(450));
+        System.out.println(c);
+        Matrix conversations = a.multiple(b).multiple(c).multiple(new Scale(350));
 
         for (int i = 0; i < WORKERS_COUNT; i++) {
             nextTasks.add(new Task(conversations, object3D, FillType.GURO));
@@ -147,7 +152,6 @@ public class Master {
             Side curSide = object3D.getSides().get(i);
             nextTasks.get(i % WORKERS_COUNT).addSide(curSide);
         }
-
 
     }
 }

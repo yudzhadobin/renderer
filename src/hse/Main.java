@@ -12,7 +12,9 @@ import hse.matrixes.conversations.RotationY;
 import hse.objects.Object3D;
 import hse.objects.Point3D;
 import hse.ui.MainForm;
+import hse.ui.SettingsForm;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -23,7 +25,7 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException {
 
-
+//        Object3D fromFile = Object3D.createFromFile(Paths.get("./models/head.obj"));
         EventQueue.invokeLater(() -> {
             form = new MainForm();
             form.setVisible(true);
@@ -31,7 +33,7 @@ public class Main {
 
         Thread.currentThread().sleep(1000);
         Object3D fromFile = Object3D.createFromFile(Paths.get("./models/head.obj"));
-
+        form.addObject(fromFile);
         Master master = new Master(fromFile, form);
 
     }
