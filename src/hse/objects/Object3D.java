@@ -37,11 +37,20 @@ public class Object3D {
             add(0);
         }
     };
+    List<Integer> move = new ArrayList<Integer>() {
+        {
+            add(0);
+            add(0);
+            add(0);
+        }
+    };
 
+    
     Point3D position;
     BufferedImage texture;
 
     BoundingBox box = new BoundingBox();
+    private int scale = 100;
 
     public void setTexture(BufferedImage texture) {
         this.texture = texture;
@@ -122,38 +131,6 @@ public class Object3D {
                             ));
                         }
                         result.sides.add(new Side(pointInfos));
-//                        //заполняем грани
-//                        result.sides.addAll(Side.create(
-//                                new ArrayList<Integer>() {
-//                                    {
-//                                        for (int i = 1; i < parts.length; i++) {
-//                                            add(Integer.parseInt(parts[i].split("/")[0]) - 1);
-//                                        }
-//                                    }
-//                                }
-//                        ));
-//
-//                        UvCoordinate was = null;
-//                        int index = -1;
-//                        for (int i = 1; i < parts.length; i++) {
-//                            if(result.localPoints.get(Integer.parseInt(parts[i].split("/")[0]) - 1).getUvCoordinate() != null) {
-//                                 was = result.localPoints.get(Integer.parseInt(parts[i].split("/")[0]) - 1).getUvCoordinate();
-//                                index = i;
-//                            }
-//                            result.localPoints.get(Integer.parseInt(parts[i].split("/")[0]) - 1).
-//                                    setNormal(normals.get(Integer.parseInt(parts[i].split("/")[1])-1));
-//                        }
-//
-//                        for (int i = 1; i < parts.length; i++) {
-//                            result.localPoints.get(Integer.parseInt(parts[i].split("/")[0]) - 1).
-//                                    setUvCoordinate(uvCoordinates.get(Integer.parseInt(parts[i].split("/")[1])-1));
-//                        }
-//                        if(index != -1) {
-//                            if (!was.equals(result.localPoints.get(Integer.parseInt(parts[index].split("/")[0]) - 1).getUvCoordinate())) {
-//                                int j = 5;
-//                            }
-//                        }
-
                         break;
 
                     case "vt":
@@ -237,5 +214,38 @@ public class Object3D {
 
     public int getZRotation() {
         return rotations.get(2);
+    }
+
+
+    public void setXMove(int x) {
+        this.move.set(0, x);
+    }
+
+    public void setYMove(int y) {
+        this.move.set(1, y);
+    }
+
+    public void setZMove(int z) {
+        this.move.set(2, z);
+    }
+
+    public int getXMove() {
+        return move.get(0);
+    }
+
+    public int getYMove() {
+        return move.get(1);
+    }
+
+    public int getZMove() {
+        return move.get(2);
+    }
+
+    public void setScale(int scale) {
+        this.scale = scale;
+    }
+
+    public int getScale() {
+        return scale;
     }
 }

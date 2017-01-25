@@ -50,16 +50,18 @@ public class BoundingBox {
         }
     }
 
-    public void draw(SwapChain swapChain) {
-        BufferedImage drawing = swapChain.getDrawing();
+    public synchronized void draw(SwapChain swapChain) {
+        if (a.x != null && b.x != null) {
+            BufferedImage drawing = swapChain.getDrawing();
 
-        Graphics graphics = drawing.getGraphics();
-        graphics.setColor(Color.GREEN);
+            Graphics graphics = drawing.getGraphics();
+            graphics.setColor(Color.GREEN);
 
-        graphics.drawLine(a.x, a.y, a.x, b.y);
-        graphics.drawLine(a.x, a.y, b.x, a.y);
-        graphics.drawLine(b.x, a.y, b.x, b.y);
-        graphics.drawLine(a.x, b.y, b.x, b.y);
+            graphics.drawLine(a.x, a.y, a.x, b.y);
+            graphics.drawLine(a.x, a.y, b.x, a.y);
+            graphics.drawLine(b.x, a.y, b.x, b.y);
+            graphics.drawLine(a.x, b.y, b.x, b.y);
+        }
     }
 
     public synchronized void clear() {

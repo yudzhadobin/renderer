@@ -16,22 +16,53 @@ public class SettingsForm extends JFrame {
     JSlider angleX = new JSlider();
     JSlider angleY = new JSlider();
     JSlider angleZ = new JSlider();
-
+    JSpinner scale = new JSpinner();
+    JSpinner moveX = new JSpinner();
+    JSpinner moveY = new JSpinner();
+    JSpinner moveZ = new JSpinner();
 
     public SettingsForm(Object3D object3D) {
         this.object3D = object3D;
 
         initSliders();
-
+        initScale();
         Container contentPane = this.getContentPane();
         this.setMinimumSize(new Dimension(400,400));
         contentPane.setLayout(new FlowLayout());
         contentPane.add(angleX);
         contentPane.add(angleY);
         contentPane.add(angleZ);
+        contentPane.add(scale);
+        contentPane.add(moveX);
+        contentPane.add(moveY);
+        contentPane.add(moveZ);
+
 
     }
 
+    private void initScale() {
+        SpinnerModel sm = new SpinnerNumberModel(100, 0, 500, 10); //default value,lower bound,upper bound,increment by
+        scale.setModel(sm);
+        scale.addChangeListener(
+                e -> {
+                    object3D.setScale((Integer) scale.getValue());
+                }
+        );
+//        SpinnerModel moveModel1 = new SpinnerNumberModel(0, -100, 100, 1);
+        moveX.setModel(new SpinnerNumberModel(0, -100, 100, 1));
+        moveY.setModel(new SpinnerNumberModel(0, -100, 100, 1));
+        moveZ.setModel(new SpinnerNumberModel(0, -100, 100, 1));
+
+        moveX.addChangeListener(e -> {
+            object3D.setXMove((Integer)moveX.getValue());
+        });
+        moveY.addChangeListener(e -> {
+            object3D.setYMove((Integer)moveY.getValue());
+        });
+        moveZ.addChangeListener(e -> {
+            object3D.setZMove((Integer)moveZ.getValue());
+        });
+    }
 
     private void initSliders() {
         initSlider(angleX);

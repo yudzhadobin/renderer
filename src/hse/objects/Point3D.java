@@ -1,6 +1,7 @@
 package hse.objects;
 
 import hse.UvCoordinate;
+import hse.matrixes.Matrix;
 
 import java.awt.*;
 
@@ -87,4 +88,5 @@ public class Point3D<T extends Number> {
         result = 31 * result + (z != null ? z.hashCode() : 0);
         return result;
     }
+
 }

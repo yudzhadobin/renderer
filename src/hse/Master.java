@@ -2,6 +2,7 @@ package hse;
 
 import hse.light.FillType;
 import hse.matrixes.Matrix;
+import hse.matrixes.conversations.MoveMatrix;
 import hse.matrixes.conversations.RotationX;
 import hse.matrixes.conversations.RotationY;
 import hse.matrixes.conversations.RotationZ;
@@ -116,7 +117,7 @@ public class Master {
                         break;
                     } else {
                         try {
-                            Thread.currentThread().sleep(5);
+                            Thread.currentThread().sleep(10);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -140,17 +141,19 @@ public class Master {
 
         Matrix b = new RotationY(object3D.getYRotation());
         Matrix c = new RotationZ(object3D.getZRotation());
-
-        Matrix conversations = a.multiple(b).multiple(c).multiple(new Scale(350));
+        Matrix scale = new Scale(object3D.getScale());
+        Matrix move = new MoveMatrix(object3D.getXMove(), object3D.getYMove(), object3D.getZMove());
+        Matrix conversations = a.multiple(b).multiple(c).multiple(scale);
 
         for (int i = 0; i < WORKERS_COUNT; i++) {
-            nextTasks.add(new Task(conversations, object3D, FillType.GURO));
+            nextTasks.add(new Task(conversations, move, object3D, FillType.GURO));
         }
 
         for (int i = 0; i < object3D.getSides().size(); i++) {
             Side curSide = object3D.getSides().get(i);
             nextTasks.get(i % WORKERS_COUNT).addSide(curSide);
         }
+
 
     }
 }

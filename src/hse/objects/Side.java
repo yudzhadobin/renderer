@@ -399,8 +399,9 @@ public class Side {
                 double pointIntensity = intensityA + (intensityB - intensityA) * phi;
                 int savedZ = point.z;
                 point = projection.multipleInteger(point);
-                point.x += 600;
-                point.y = 500 - point.y;
+                point.x += 600 + object.getXMove();
+                point.y = 500 - point.y + object.getYMove();
+                point.z += object.getYMove();
                 if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
                     ZBuffer.getBuffer().set(point.x, point.y, savedZ);
                     drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()

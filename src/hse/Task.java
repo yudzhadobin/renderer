@@ -33,7 +33,8 @@ public class Task {
 
     Object3D object3D;
 
-    Matrix conversation;
+    Matrix rotation;
+    Matrix move;
 
     FillType fillType;
 
@@ -46,8 +47,9 @@ public class Task {
         sidesToDraw.add(side);
     }
 
-    public Task(Matrix conversation, Object3D object3D, FillType fillType) {
-        this.conversation = conversation;
+    public Task(Matrix rotation, Matrix move, Object3D object3D, FillType fillType) {
+        this.rotation = rotation;
+        this.move = move;
         this.object3D = object3D;
         this.fillType = fillType;
     }
@@ -67,7 +69,11 @@ public class Task {
                                         get(localPoint);
                                 if (!pair.getKey().get()) {
                                     Point3D<Double> point3D = pair.getValue();
-                                    point3D.swap(conversation.multiple(localPoint));
+                                    point3D.swap(rotation.multiple(localPoint));
+//                                    point3D.setX(point3D.getX() + move.get(0,3));
+//                                    point3D.setY(point3D.getY() + move.get(1,3));
+//                                    point3D.setZ(point3D.getZ() + move.get(2,3));
+
                                     pair.getKey().set(true);
                                 }
                             }
@@ -81,7 +87,6 @@ public class Task {
 
         status = TaskStatus.FINISHED;
         time = System.currentTimeMillis() - time;
-        int v = 5;
     }
 
 
