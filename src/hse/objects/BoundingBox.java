@@ -23,7 +23,7 @@ public class BoundingBox {
     }
 
 
-    public void extend(Point3D<Integer> another) {
+    public synchronized void extend(Point3D<Integer> another) {
 
         if(a.x == null || b.x == null) {
             a.x = another.x;
@@ -62,8 +62,16 @@ public class BoundingBox {
         graphics.drawLine(a.x, b.y, b.x, b.y);
     }
 
-    public void clear() {
+    public synchronized void clear() {
         a = new Point3D<>();
         b = new Point3D<>();
+    }
+
+    public Point3D<Integer> getA() {
+        return a;
+    }
+
+    public Point3D<Integer> getB() {
+        return b;
     }
 }

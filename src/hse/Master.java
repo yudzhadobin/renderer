@@ -141,7 +141,6 @@ public class Master {
         Matrix b = new RotationY(object3D.getYRotation());
         Matrix c = new RotationZ(object3D.getZRotation());
 
-        System.out.println(c);
         Matrix conversations = a.multiple(b).multiple(c).multiple(new Scale(350));
 
         for (int i = 0; i < WORKERS_COUNT; i++) {
