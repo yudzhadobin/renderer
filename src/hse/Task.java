@@ -9,6 +9,7 @@ import hse.objects.ChangeableSupplier;
 import hse.objects.Object3D;
 import hse.objects.Point3D;
 import hse.objects.Side;
+import hse.ui.SettingsForm;
 import hse.ui.SwapChain;
 import javafx.util.Pair;
 import sun.plugin2.message.Conversation;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -70,9 +72,6 @@ public class Task {
                                 if (!pair.getKey().get()) {
                                     Point3D<Double> point3D = pair.getValue();
                                     point3D.swap(rotation.multiple(localPoint));
-//                                    point3D.setX(point3D.getX() + move.get(0,3));
-//                                    point3D.setY(point3D.getY() + move.get(1,3));
-//                                    point3D.setZ(point3D.getZ() + move.get(2,3));
 
                                     pair.getKey().set(true);
                                 }
@@ -82,7 +81,7 @@ public class Task {
         );
 
         for (Side side : sidesToDraw) {
-            side.drawTextured(SwapChain.getInstance(), Projections.PERSPECTIVE, object3D, fillType);
+            side.drawTextured(SwapChain.getInstance(), Setings.projection, object3D, fillType);
         }
 
         status = TaskStatus.FINISHED;

@@ -1,9 +1,11 @@
 package hse.light;
 
+import hse.Setings;
 import hse.Stage;
 import hse.objects.Normal;
 import hse.objects.PointInfo;
 import hse.objects.Side;
+import hse.ui.SettingsForm;
 
 import java.util.List;
 
@@ -35,6 +37,9 @@ public class SimpleIntensity {
 
 
     public static double calculateIntensity(Normal normal) {
+        if(!Setings.light_on) {
+            return 0.5 * 0.2;
+        }
         double cos = (normal.getX() * Stage.light_x + normal.getY() * Stage.light_y + normal.getZ() * Stage.light_z) / (Math.sqrt(Math.pow(normal.getX(), 2)
                 + Math.pow(normal.getY(), 2) + Math.pow(normal.getZ(), 2)) * Math.sqrt(Math.pow(Stage.light_x, 2) + Math.pow(Stage.light_y, 2) + Math.pow(Stage.light_z, 2)));
         cos = Math.abs(cos);

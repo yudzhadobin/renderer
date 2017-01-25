@@ -1,5 +1,8 @@
 package hse.ui;
 
+import com.sun.scenario.Settings;
+import hse.Setings;
+import hse.matrixes.Projections;
 import hse.objects.Object3D;
 
 import javax.swing.*;
@@ -20,6 +23,9 @@ public class SettingsForm extends JFrame {
     JSpinner moveX = new JSpinner();
     JSpinner moveY = new JSpinner();
     JSpinner moveZ = new JSpinner();
+    JComboBox projection = new JComboBox();
+    JCheckBox light = new JCheckBox();
+
 
     public SettingsForm(Object3D object3D) {
         this.object3D = object3D;
@@ -28,6 +34,22 @@ public class SettingsForm extends JFrame {
         initScale();
         Container contentPane = this.getContentPane();
         this.setMinimumSize(new Dimension(400,400));
+        projection.addItem("Перспективная");
+        projection.addItem("Ортогональная");
+        projection.setSelectedIndex(0);
+        projection.addItemListener(e -> {
+            if(e.getItem().equals("Перспективная")) {
+                Setings.projection = Projections.PERSPECTIVE;
+            } else {
+                Setings.projection = Projections.ORTHOGONAL;
+            }
+        });
+
+        light.addChangeListener(
+                e -> {
+                    Setings.light_on = light.isSelected();
+                }
+        );
         contentPane.setLayout(new FlowLayout());
         contentPane.add(angleX);
         contentPane.add(angleY);
@@ -36,7 +58,8 @@ public class SettingsForm extends JFrame {
         contentPane.add(moveX);
         contentPane.add(moveY);
         contentPane.add(moveZ);
-
+        contentPane.add(projection);
+        contentPane.add(light);
 
     }
 
@@ -49,9 +72,9 @@ public class SettingsForm extends JFrame {
                 }
         );
 //        SpinnerModel moveModel1 = new SpinnerNumberModel(0, -100, 100, 1);
-        moveX.setModel(new SpinnerNumberModel(0, -100, 100, 1));
-        moveY.setModel(new SpinnerNumberModel(0, -100, 100, 1));
-        moveZ.setModel(new SpinnerNumberModel(0, -100, 100, 1));
+        moveX.setModel(new SpinnerNumberModel(0, -400, 400, 1));
+        moveY.setModel(new SpinnerNumberModel(0, -400, 400, 1));
+        moveZ.setModel(new SpinnerNumberModel(0, -400, 400, 1));
 
         moveX.addChangeListener(e -> {
             object3D.setXMove((Integer)moveX.getValue());
