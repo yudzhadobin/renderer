@@ -64,7 +64,7 @@ public class Side {
     */
 
     @SuppressWarnings("unchecked")
-    public void drawContour(SwapChain swapChain, Matrix projection) {
+    public void drawContour(SwapChain swapChain, Matrix projection, Object3D object) {
         Graphics graphics = swapChain.getDrawing().getGraphics();
 
         Point3D a = pointsInfo.get(0).point;
@@ -74,14 +74,27 @@ public class Side {
         Point3D<Double> convertedA = projection.multiple(a);
         Point3D<Double> convertedB = projection.multiple(b);
         Point3D<Double> convertedC = projection.multiple(c);
+        convertedA.setX(convertedA.getX() + 600);
+        convertedA.setY(500 - convertedA.getY());
 
-        graphics.drawLine(600 + convertedA.x.intValue(), 500 - convertedA.y.intValue(), 600 + convertedB.x.intValue(), 500 - convertedB.y.intValue());
-        graphics.drawLine(600 + convertedB.x.intValue(), 500 - convertedB.y.intValue(), 600 + convertedC.x.intValue(), 500 - convertedC.y.intValue());
-        graphics.drawLine(600 + convertedC.x.intValue(), 500 - convertedC.y.intValue(), 600 + convertedA.x.intValue(), 500 - convertedA.y.intValue());
+        convertedB.setX(convertedB.getX() + 600);
+        convertedB.setY(500 - convertedB.getY());
+
+        convertedC.setX(convertedC.getX() + 600);
+        convertedC.setY(500 - convertedC.getY());
+        graphics.drawLine(convertedA.x.intValue(), convertedA.y.intValue(), convertedB.x.intValue(), convertedB.y.intValue());
+        graphics.drawLine(convertedB.x.intValue(), convertedB.y.intValue(), convertedC.x.intValue(), convertedC.y.intValue());
+        graphics.drawLine(convertedC.x.intValue(), convertedC.y.intValue(), convertedA.x.intValue(), convertedA.y.intValue());
+
+        object.box.extend(new Point3D<>(convertedA.getX().intValue(), convertedA.getY().intValue(), convertedA.getZ().intValue()));
+        object.box.extend(new Point3D<>(convertedB.getX().intValue(), convertedB.getY().intValue(), convertedB.getZ().intValue()));
+        object.box.extend(new Point3D<>(convertedC.getX().intValue(), convertedC.getY().intValue(), convertedC.getZ().intValue()));
+
+
     }
 
     @SuppressWarnings("unchecked")
-    public void drawFill(SwapChain swapChain, Matrix projection, Boolean isLightOn) {
+    public void drawFill(SwapChain swapChain, Matrix projection, Object3D object3D, Boolean isLightOn) {
         BufferedImage drawingPanel = swapChain.getDrawing();
 
 
@@ -140,13 +153,13 @@ public class Side {
                 point.z += round((B.z - A.z) * phi);
 
                 point.x += 600;
-                point.y = 600 - point.y;
+                point.y = 500 - point.y;
 
                 if (ZBuffer.getBuffer().get(point.x, point.y) < point.z) {
 
                     ZBuffer.getBuffer().set(point.x, point.y, point.z);
                     drawingPanel.setRGB((int) (point.x), (int) (point.y), color.getRGB()); // attention, due to int casts convertedA.y+i != A.y
-
+                    object3D.box.extend(point);
 
                 }
 

@@ -1,5 +1,6 @@
 package hse;
 
+import com.sun.scenario.Settings;
 import hse.light.FillType;
 import hse.matrixes.Matrix;
 import hse.matrixes.conversations.MoveMatrix;
@@ -147,11 +148,11 @@ public class Master {
         object3D.setZMove(Setings.offset_Z);
         Matrix move = new MoveMatrix(Setings.offset_X, Setings.offset_Y, Setings.offset_Z);
         Matrix conversations = a.multiple(b).multiple(c).multiple(scale);
-
+        DrawingMode mode = Setings.drawingMode;
         boolean isLightOn = Setings.light_on;
 
         for (int i = 0; i < WORKERS_COUNT; i++) {
-            nextTasks.add(new Task(conversations, move, object3D, FillType.GURO, isLightOn));
+            nextTasks.add(new Task(conversations, move, object3D, FillType.GURO, isLightOn, mode));
         }
 
         for (int i = 0; i < object3D.getSides().size(); i++) {

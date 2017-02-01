@@ -2,6 +2,7 @@ package hse;
 
 import com.sun.org.apache.xerces.internal.impl.dv.xs.DoubleDV;
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.sun.scenario.Settings;
 import hse.light.FillType;
 import hse.matrixes.Matrix;
 import hse.matrixes.Projections;
@@ -28,6 +29,7 @@ import java.util.function.Supplier;
 public class Task {
 
     private final boolean isLightOn;
+    private final DrawingMode drawingMode;
     long time;
 
     List<Side> sidesToDraw = new ArrayList<>();
@@ -50,12 +52,13 @@ public class Task {
         sidesToDraw.add(side);
     }
 
-    public Task(Matrix rotation, Matrix move, Object3D object3D, FillType fillType, boolean isLightOn) {
+    public Task(Matrix rotation, Matrix move, Object3D object3D, FillType fillType, boolean isLightOn, DrawingMode drawingMode) {
         this.rotation = rotation;
         this.move = move;
         this.object3D = object3D;
         this.fillType = fillType;
         this.isLightOn = isLightOn;
+        this.drawingMode = drawingMode;
     }
 
     public void complete() {
@@ -83,7 +86,20 @@ public class Task {
         );
 
         for (Side side : sidesToDraw) {
-            side.drawTextured(SwapChain.getInstance(), Setings.projection, object3D, fillType, isLightOn);
+            switch (drawingMode) {
+            case CONTOUR: {
+                side.drawContour(SwapChain.getInstance(), Setings.projection, object3D);
+                break;
+            }
+            case MODEL: {
+                side.drawFill(SwapChain.getInstance(), Setings.projection, object3D, isLightOn);
+                break;
+            }
+            case TEXTURED: {
+                side.drawTextured(SwapChain.getInstance(), Setings.projection, object3D, fillType, isLightOn);
+                break;
+            }
+            }
         }
 
         status = TaskStatus.FINISHED;

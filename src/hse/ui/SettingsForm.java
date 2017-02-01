@@ -1,6 +1,7 @@
 package hse.ui;
 
 import com.sun.scenario.Settings;
+import hse.DrawingMode;
 import hse.Setings;
 import hse.matrixes.Projections;
 import hse.objects.Object3D;
@@ -24,6 +25,8 @@ public class SettingsForm extends JFrame {
     JSpinner moveY = new JSpinner();
     JSpinner moveZ = new JSpinner();
     JComboBox projection = new JComboBox();
+    JComboBox drawMode = new JComboBox();
+
     JCheckBox light = new JCheckBox();
 
 
@@ -37,6 +40,30 @@ public class SettingsForm extends JFrame {
         projection.addItem("Перспективная");
         projection.addItem("Ортогональная");
         projection.setSelectedIndex(0);
+
+        projection.addItemListener(e -> {
+            if(e.getItem().equals("Перспективная")) {
+                Setings.projection = Projections.PERSPECTIVE;
+            } else {
+                Setings.projection = Projections.ORTHOGONAL;
+            }
+        });
+
+        drawMode.addItem("Контур");
+        drawMode.addItem("Модель");
+        drawMode.addItem("Текстуры");
+
+        drawMode.addItemListener(e -> {
+            if(e.getItem().equals("Контур")) {
+                Setings.drawingMode = DrawingMode.CONTOUR;
+            }
+            if(e.getItem().equals("Модель")) {
+                Setings.drawingMode = DrawingMode.MODEL;
+            }
+            if(e.getItem().equals("Текстуры")) {
+                Setings.drawingMode = DrawingMode.TEXTURED;
+            }
+        });
 
         projection.addItemListener(e -> {
             if(e.getItem().equals("Перспективная")) {
@@ -62,6 +89,7 @@ public class SettingsForm extends JFrame {
         contentPane.add(moveZ);
         contentPane.add(projection);
         contentPane.add(light);
+        contentPane.add(drawMode);
 
     }
 

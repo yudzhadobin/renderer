@@ -18,4 +18,5 @@ public class Setings {
     public static boolean light_on = true;
 
     public static Matrix projection = Projections.ORTHOGONAL;
+    public static DrawingMode drawingMode = DrawingMode.CONTOUR;
 }

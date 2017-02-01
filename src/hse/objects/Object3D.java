@@ -153,22 +153,6 @@ public class Object3D {
         }
     }
 
-    @Deprecated()
-    public void draw() {
-        Matrix scale = new Scale();
-
-        List<Point3D<Double>> transformedPoints = new ArrayList<>();
-
-        for (int i = 0; i < localPoints.size(); i++) {
-            transformedPoints.add(scale.multiple(localPoints.get(i)));
-        }
-
-        for (int i = 0; i < sides.size(); i++) {
-            Side side = sides.get(i);
-            side.drawContour(SwapChain.getInstance(), Projections.ORTHOGONAL);
-        }
-    //    SwapChain.getInstance().swap();
-    }
 
     public List<Point3D<Double>> getLocalPoints() {
         return localPoints;
