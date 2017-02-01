@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class SimpleIntensity {
 
-    public static double calculateIntensity(Side side) {
+    public static double calculateIntensity(Side side, boolean isLightOn) {
         List<PointInfo> pointsInfo = side.getPointsInfo();
         Normal normal = new Normal();
         normal.setX(
@@ -32,12 +32,12 @@ public class SimpleIntensity {
                         pointsInfo.get(1).getNormal().getZ() +
                         pointsInfo.get(2).getNormal().getZ()) / 3
         );
-        return calculateIntensity(normal);
+        return calculateIntensity(normal, isLightOn);
     }
 
 
-    public static double calculateIntensity(Normal normal) {
-        if(!Setings.light_on) {
+    public static double calculateIntensity(Normal normal, boolean isLightOn) {
+        if(isLightOn) {
             return 0.5 * 0.2;
         }
         double cos = (normal.getX() * Stage.light_x + normal.getY() * Stage.light_y + normal.getZ() * Stage.light_z) / (Math.sqrt(Math.pow(normal.getX(), 2)

@@ -27,6 +27,7 @@ import java.util.function.Supplier;
  */
 public class Task {
 
+    private final boolean isLightOn;
     long time;
 
     List<Side> sidesToDraw = new ArrayList<>();
@@ -49,11 +50,12 @@ public class Task {
         sidesToDraw.add(side);
     }
 
-    public Task(Matrix rotation, Matrix move, Object3D object3D, FillType fillType) {
+    public Task(Matrix rotation, Matrix move, Object3D object3D, FillType fillType, boolean isLightOn) {
         this.rotation = rotation;
         this.move = move;
         this.object3D = object3D;
         this.fillType = fillType;
+        this.isLightOn = isLightOn;
     }
 
     public void complete() {
@@ -81,7 +83,7 @@ public class Task {
         );
 
         for (Side side : sidesToDraw) {
-            side.drawTextured(SwapChain.getInstance(), Setings.projection, object3D, fillType);
+            side.drawTextured(SwapChain.getInstance(), Setings.projection, object3D, fillType, isLightOn);
         }
 
         status = TaskStatus.FINISHED;

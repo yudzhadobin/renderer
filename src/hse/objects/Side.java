@@ -81,7 +81,7 @@ public class Side {
     }
 
     @SuppressWarnings("unchecked")
-    public void drawFill(SwapChain swapChain, Matrix projection) {
+    public void drawFill(SwapChain swapChain, Matrix projection, Boolean isLightOn) {
         BufferedImage drawingPanel = swapChain.getDrawing();
 
 
@@ -100,7 +100,7 @@ public class Side {
 
         int totalHeight = c.y - a.y;
 
-        double intensity = SimpleIntensity.calculateIntensity(this);
+        double intensity = SimpleIntensity.calculateIntensity(this, isLightOn);
 
 
         Color color = new Color((int) (255 * intensity), (int) (255 * intensity),
@@ -160,16 +160,16 @@ public class Side {
 
 
     @SuppressWarnings("unchecked")
-    public void drawTextured(SwapChain swapChain, Matrix projection, Object3D object, FillType fillType) {
+    public void drawTextured(SwapChain swapChain, Matrix projection, Object3D object, FillType fillType, Boolean isLightOn) {
         switch (fillType) {
             case ORDINAL:
-                drawTexturedOrdinal(swapChain, projection, object);
+                drawTexturedOrdinal(swapChain, projection, object, isLightOn);
                 break;
             case GURO:
-                drawTexturedGuro(swapChain, projection, object);
+                drawTexturedGuro(swapChain, projection, object, isLightOn);
                 break;
             case FONG:
-                drawTexturedFong(swapChain, projection, object);
+                drawTexturedFong(swapChain, projection, object, isLightOn);
                 break;
         }
     }
@@ -177,7 +177,7 @@ public class Side {
 
 
     @SuppressWarnings("unchecked")
-    public void drawTexturedOrdinal(SwapChain swapChain, Matrix projection, Object3D object) {
+    public void drawTexturedOrdinal(SwapChain swapChain, Matrix projection, Object3D object, Boolean isLightOn) {
         BufferedImage drawingPanel = swapChain.getDrawing();
 
 
@@ -208,7 +208,7 @@ public class Side {
 
         int totalHeight = c.y - a.y;
 
-        double intensity = SimpleIntensity.calculateIntensity(this);
+        double intensity = SimpleIntensity.calculateIntensity(this, isLightOn);
         if (intensity < 0) {
             return;
         }
@@ -285,7 +285,7 @@ public class Side {
     }
 
     @SuppressWarnings("unchecked")
-    public void drawTexturedGuro(SwapChain swapChain, Matrix projection, Object3D object) {
+    public void drawTexturedGuro(SwapChain swapChain, Matrix projection, Object3D object, Boolean isLightOn) {
         BufferedImage drawingPanel = swapChain.getDrawing();
 
 
@@ -301,9 +301,9 @@ public class Side {
         UvCoordinate bUv = new UvCoordinate(bInfo.getUvCoordinates());
         UvCoordinate cUv = new UvCoordinate(cInfo.getUvCoordinates());
 
-        double aIntensity = SimpleIntensity.calculateIntensity(aInfo.normal);
-        double bIntensity = SimpleIntensity.calculateIntensity(bInfo.normal);
-        double cIntensity = SimpleIntensity.calculateIntensity(cInfo.normal);
+        double aIntensity = SimpleIntensity.calculateIntensity(aInfo.normal, isLightOn);
+        double bIntensity = SimpleIntensity.calculateIntensity(bInfo.normal, isLightOn);
+        double cIntensity = SimpleIntensity.calculateIntensity(cInfo.normal, isLightOn);
 
         if (a.y > b.y) {
             a.swap(b);
@@ -419,7 +419,7 @@ public class Side {
     }
 
     @SuppressWarnings("unchecked")
-    public void drawTexturedFong(SwapChain swapChain, Matrix projection, Object3D object) {
+    public void drawTexturedFong(SwapChain swapChain, Matrix projection, Object3D object, Boolean isLightOn) {
         BufferedImage drawingPanel = swapChain.getDrawing();
 
 
@@ -522,7 +522,7 @@ public class Side {
                 );
 
                 double pointIntensity = SimpleIntensity.calculateIntensity(new Normal().plus(
-                        normalA.plus((normalB.minus(normalA).multiple(phi)))));
+                        normalA.plus((normalB.minus(normalA).multiple(phi)))), isLightOn);
                 int savedZ = point.z;
                 point = projection.multipleInteger(point);
                 point.x += 600;

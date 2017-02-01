@@ -37,6 +37,7 @@ public class SettingsForm extends JFrame {
         projection.addItem("Перспективная");
         projection.addItem("Ортогональная");
         projection.setSelectedIndex(0);
+
         projection.addItemListener(e -> {
             if(e.getItem().equals("Перспективная")) {
                 Setings.projection = Projections.PERSPECTIVE;
@@ -47,9 +48,10 @@ public class SettingsForm extends JFrame {
 
         light.addChangeListener(
                 e -> {
-                    Setings.light_on = light.isSelected();
+                    Setings.light_on = !light.isSelected();
                 }
         );
+
         contentPane.setLayout(new FlowLayout());
         contentPane.add(angleX);
         contentPane.add(angleY);

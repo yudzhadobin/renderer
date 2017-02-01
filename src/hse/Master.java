@@ -145,8 +145,10 @@ public class Master {
         Matrix move = new MoveMatrix(object3D.getXMove(), object3D.getYMove(), object3D.getZMove());
         Matrix conversations = a.multiple(b).multiple(c).multiple(scale);
 
+        boolean isLightOn = Setings.light_on;
+
         for (int i = 0; i < WORKERS_COUNT; i++) {
-            nextTasks.add(new Task(conversations, move, object3D, FillType.GURO));
+            nextTasks.add(new Task(conversations, move, object3D, FillType.GURO, isLightOn));
         }
 
         for (int i = 0; i < object3D.getSides().size(); i++) {
