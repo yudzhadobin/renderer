@@ -15,6 +15,7 @@ import hse.ui.SwapChain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -138,11 +139,13 @@ public class Master {
 //    int rotate = 0;
     private void createTasks() {
         Matrix a = new RotationX(object3D.getXRotation());
-
         Matrix b = new RotationY(object3D.getYRotation());
         Matrix c = new RotationZ(object3D.getZRotation());
         Matrix scale = new Scale(object3D.getScale());
-        Matrix move = new MoveMatrix(object3D.getXMove(), object3D.getYMove(), object3D.getZMove());
+        object3D.setXMove(Setings.offset_X);
+        object3D.setYMove(Setings.offset_Y);
+        object3D.setZMove(Setings.offset_Z);
+        Matrix move = new MoveMatrix(Setings.offset_X, Setings.offset_Y, Setings.offset_Z);
         Matrix conversations = a.multiple(b).multiple(c).multiple(scale);
 
         boolean isLightOn = Setings.light_on;

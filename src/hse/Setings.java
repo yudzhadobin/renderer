@@ -8,6 +8,10 @@ import hse.matrixes.Projections;
  */
 public class Setings {
 
+    public static int offset_X = 0;
+    public static int offset_Y = 0;
+    public static int offset_Z = 0;
+
     public static int WINDOW_HEIGHT = 1240;
     public static int WINDOW_WIDTH = 1240;
 

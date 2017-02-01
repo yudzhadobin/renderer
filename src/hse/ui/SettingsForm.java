@@ -79,13 +79,13 @@ public class SettingsForm extends JFrame {
         moveZ.setModel(new SpinnerNumberModel(0, -400, 400, 1));
 
         moveX.addChangeListener(e -> {
-            object3D.setXMove((Integer)moveX.getValue());
+            Setings.offset_X = (int) moveX.getValue();
         });
         moveY.addChangeListener(e -> {
-            object3D.setYMove((Integer)moveY.getValue());
+            Setings.offset_Y = (int) moveY.getValue();
         });
         moveZ.addChangeListener(e -> {
-            object3D.setZMove((Integer)moveZ.getValue());
+            Setings.offset_Z = (int) moveZ.getValue();
         });
     }
 
