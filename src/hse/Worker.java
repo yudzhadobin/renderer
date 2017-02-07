@@ -3,6 +3,7 @@ package hse;
 import com.sun.org.apache.bcel.internal.generic.SWAP;
 import hse.ui.SwapChain;
 
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -11,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Worker {
     Thread workerThread;
-    Task task;
+    List<Task> tasks;
     Lock lock = new ReentrantLock();
 
     public Worker() {
@@ -23,8 +24,8 @@ public class Worker {
     void perform() {
         do {
             synchronized (lock) {
-                if(task != null) {
-                    task.complete();
+                if(tasks != null) {
+                    tasks.forEach(Task::complete);
                 }
                 try {
                     lock.wait();
@@ -35,9 +36,9 @@ public class Worker {
         }while (true);
     }
 
-    public void setTask(Task task) {
+    public void setTask(List<Task> tasks) {
         synchronized (lock) {
-            this.task = task;
+            this.tasks = tasks;
             lock.notify();
         }
     }

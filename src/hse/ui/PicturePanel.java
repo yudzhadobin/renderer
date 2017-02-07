@@ -2,6 +2,7 @@ package hse.ui;
 
 import hse.Setings;
 
+import hse.Stage;
 import hse.objects.Object3D;
 import hse.objects.Point3D;
 
@@ -20,7 +21,6 @@ import java.util.List;
 public class PicturePanel extends JPanel {
     SwapChain swapChain;
 
-    List<Object3D> drawedObjects =  new ArrayList<>();
 
 
     public PicturePanel() {
@@ -41,7 +41,7 @@ public class PicturePanel extends JPanel {
                         e.getY(),
                         0
                 );
-                for (Object3D drawedObject : drawedObjects) {
+                for (Object3D drawedObject : Stage.getInstance().getDisplayedObjects()) {
                     if(drawedObject.getBox().isIn(point3D)) {
                         EventQueue.invokeLater(() -> {
                             SettingsForm form = new SettingsForm(drawedObject);

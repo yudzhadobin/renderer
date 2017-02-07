@@ -32,9 +32,9 @@ public class Main {
         });
 
         Thread.currentThread().sleep(1000);
-        Object3D fromFile = Object3D.createFromFile(Paths.get("./models/head.obj"));
-        form.addObject(fromFile);
-        Master master = new Master(fromFile, form);
+        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/head.obj")));
+        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
+        Master master = new Master(form);
 
     }
 }

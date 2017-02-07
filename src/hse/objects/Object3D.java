@@ -88,7 +88,7 @@ public class Object3D {
             List<UvCoordinate> uvCoordinates = new ArrayList<>();
             List<Normal> normals = new ArrayList<>();
             while ((s = reader.readLine()) != null) {
-                final String[] parts = s.replaceAll("\\s+", " ").split(" ");
+                final String[] parts = s.replaceAll("\\s+", " ").trim().split(" ");
 
                 switch (parts[0]) {
                     case "v":
@@ -120,13 +120,17 @@ public class Object3D {
                         for (int i = 1; i < parts.length; i++) {
 
                             String[] infos = parts[i].split("/");
-
-
+                            UvCoordinate uvCoordinate;
+                            try {
+                                uvCoordinate = uvCoordinates.get(Integer.parseInt(infos[1]) - 1);
+                            }catch (Exception e) {
+                                uvCoordinate = new UvCoordinate(0,0,0);//// TODO: 07.02.2017 rewrite
+                            }
                             pointInfos.add(new PointInfo(
                                     result.transformedPoints.get(
                                             result.localPoints.get(Integer.parseInt(infos[0]) - 1)
                                     ).getValue(),
-                                    uvCoordinates.get(Integer.parseInt(infos[1]) - 1),
+                                    uvCoordinate,
                                     normals.get(Integer.parseInt(infos[2]) - 1),
                                     Integer.parseInt(infos[0]) - 1
                             ));

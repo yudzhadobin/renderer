@@ -30,9 +30,7 @@ public class MainForm extends JFrame {
     }
 
 
-    public void addObject(Object3D object3D) {
-        picturePanel.drawedObjects.add(object3D);
-    }
+
 
     @Override
     public void repaint() {

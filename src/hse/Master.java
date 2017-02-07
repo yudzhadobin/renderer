@@ -30,7 +30,7 @@ public class Master {
 
     public static final int WORKERS_COUNT = 3;
 
-    Object3D object3D;
+//    Object3D object3D;
     List<Worker> workers = new ArrayList<>();
     List<Task> currentTasks = new ArrayList<>();
     List<Task> nextTasks = new ArrayList<>();
@@ -43,7 +43,7 @@ public class Master {
     Lock taskThreadLock = new ReentrantLock(true);
     Lock swapThreadLock = new ReentrantLock(true);
 
-    public Master(Object3D object3D, MainForm form) {
+    public Master( MainForm form) {
         for (int i = 0; i < WORKERS_COUNT; i++) {
             workers.add(new Worker());
         }
@@ -51,20 +51,14 @@ public class Master {
 
         taskThread.start();
 
-        this.object3D = object3D;
         this.form = form;
 
     }
-
-    public void setObject3D(Object3D object3D) {
-        this.object3D = object3D;
-    }
-
     void generateTasks() {
         boolean isFirst = true;
         do {
             synchronized (taskThreadLock) {
-                createTasks();
+                createTasks(Stage.getInstance());
                 synchronized (swapThreadLock) {
                     swapThreadLock.notify();
                 }
@@ -93,7 +87,7 @@ public class Master {
                 }
 
                 for (int i = 0; i < WORKERS_COUNT; i++) {
-                    workers.get(i).setTask(currentTasks.get(i));
+                    workers.get(i).setTask(currentTasks.subList(i * 2, i * 2 + 2));
                 }
 
 
@@ -107,7 +101,13 @@ public class Master {
                     }
 
                     if(flag) {
-                        object3D.getBox().draw(SwapChain.getInstance());
+                        if(Stage.getInstance().getDisplayedObjects().size() == 1) {
+                            Stage.getInstance().getDisplayedObjects().forEach(object3D -> {
+                                object3D.getBox().draw(SwapChain.getInstance());
+                            });
+                        }
+
+                        //                        object3D.getBox().draw(SwapChain.getInstance());
 //                        long maxTime = -10;
 //                        for (int i = 0; i < currentTasks.size(); i++) {
 //                            maxTime = currentTasks.get(i).getTime() > maxTime ? currentTasks.get(i).getTime() : maxTime;
@@ -115,7 +115,8 @@ public class Master {
 //                        System.out.println(maxTime);
                         form.picturePanel.repaint();
                         ZBuffer.getBuffer().clear();
-                        object3D.clear();
+                        Stage.getInstance().getDisplayedObjects().forEach(Object3D::clear);
+
                         break;
                     } else {
                         try {
@@ -136,7 +137,7 @@ public class Master {
             }
         } while (true);
     }
-
+/*
 //    int rotate = 0;
     private void createTasks() {
         Matrix a = new RotationX(object3D.getXRotation());
@@ -160,6 +161,39 @@ public class Master {
             nextTasks.get(i % WORKERS_COUNT).addSide(curSide);
         }
 
+
+    }*/
+
+    private void createTasks(Stage stage) {
+
+        DrawingMode mode = Setings.drawingMode;
+        boolean isLightOn = Setings.light_on;
+
+        Object3D currentObject;
+        for (int i = 0; i < WORKERS_COUNT; i++) {
+            for (int j = 0; j < stage.getObjectCount(); j++) {
+                currentObject = stage.getObject(j);
+                Matrix a = new RotationX(currentObject.getXRotation());
+                Matrix b = new RotationY(currentObject.getYRotation());
+                Matrix c = new RotationZ(currentObject.getZRotation());
+                Matrix scale = new Scale(currentObject.getScale());
+                currentObject.setXMove(Setings.offset_X);
+                currentObject.setYMove(Setings.offset_Y);
+                currentObject.setZMove(Setings.offset_Z);
+                Matrix move = new MoveMatrix(Setings.offset_X, Setings.offset_Y, Setings.offset_Z);
+                Matrix conversations = a.multiple(b).multiple(c).multiple(scale);
+
+                nextTasks.add(new Task(conversations, move, stage.getObject(j), FillType.GURO, isLightOn, mode));
+            }
+        }
+
+        for (int j = 0; j < stage.getObjectCount(); j++) {
+            currentObject = stage.getObject(j);
+            for (int i = 0; i < currentObject.getSides().size(); i++) {
+                Side curSide = currentObject.getSides().get(i);
+                nextTasks.get(i % WORKERS_COUNT * 2 + j).addSide(curSide);
+            }
+        }
 
     }
 }
