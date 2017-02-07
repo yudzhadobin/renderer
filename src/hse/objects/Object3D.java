@@ -27,6 +27,7 @@ public class Object3D {
     List<Point3D<Double>> localPoints;
 
     Map<Point3D<Double>,Pair<ChangeableSupplier<Boolean>, Point3D<Double>>> transformedPoints;
+
     List<Side> sides;
 
 

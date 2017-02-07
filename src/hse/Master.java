@@ -108,11 +108,11 @@ public class Master {
 
                     if(flag) {
                         object3D.getBox().draw(SwapChain.getInstance());
-                        long maxTime = -10;
-                        for (int i = 0; i < currentTasks.size(); i++) {
-                            maxTime = currentTasks.get(i).getTime() > maxTime ? currentTasks.get(i).getTime() : maxTime;
-                        }
-                        System.out.println(maxTime);
+//                        long maxTime = -10;
+//                        for (int i = 0; i < currentTasks.size(); i++) {
+//                            maxTime = currentTasks.get(i).getTime() > maxTime ? currentTasks.get(i).getTime() : maxTime;
+//                        }
+//                        System.out.println(maxTime);
                         form.picturePanel.repaint();
                         ZBuffer.getBuffer().clear();
                         object3D.clear();

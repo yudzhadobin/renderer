@@ -18,19 +18,19 @@ public class SimpleIntensity {
         List<PointInfo> pointsInfo = side.getPointsInfo();
         Normal normal = new Normal();
         normal.setX(
-                (pointsInfo.get(0).getNormal().getX() +
-                        pointsInfo.get(1).getNormal().getX() +
-                        pointsInfo.get(2).getNormal().getX()) / 3
+                (pointsInfo.get(0).getTransformedNormal().getX() +
+                        pointsInfo.get(1).getTransformedNormal().getX() +
+                        pointsInfo.get(2).getTransformedNormal().getX()) / 3
         );
         normal.setY(
-                (pointsInfo.get(0).getNormal().getY() +
-                        pointsInfo.get(1).getNormal().getY() +
-                        pointsInfo.get(2).getNormal().getY()) / 3
+                (pointsInfo.get(0).getTransformedNormal().getY() +
+                        pointsInfo.get(1).getTransformedNormal().getY() +
+                        pointsInfo.get(2).getTransformedNormal().getY()) / 3
         );
         normal.setZ(
-                (pointsInfo.get(0).getNormal().getZ() +
-                        pointsInfo.get(1).getNormal().getZ() +
-                        pointsInfo.get(2).getNormal().getZ()) / 3
+                (pointsInfo.get(0).getTransformedNormal().getZ() +
+                        pointsInfo.get(1).getTransformedNormal().getZ() +
+                        pointsInfo.get(2).getTransformedNormal().getZ()) / 3
         );
         return calculateIntensity(normal, isLightOn);
     }

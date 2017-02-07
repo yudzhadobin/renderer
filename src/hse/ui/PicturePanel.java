@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class PicturePanel extends JPanel {
         super();
         this.swapChain = SwapChain.getInstance();
 
+//        BufferedImage bufferedImage = new BufferedImage(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
+        this.setDoubleBuffered(true);
         this.setSize(new Dimension(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT));
 
         this.setVisible(true);
@@ -59,12 +62,16 @@ public class PicturePanel extends JPanel {
         super.repaint();
 
     }
-
+    long lastUpdate = 0;
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponents(g);
+
         g.drawImage(swapChain.getVisible(), 0, 0, this);
+        long time = System.currentTimeMillis();
+        System.out.println(time - lastUpdate);
+        lastUpdate = time;
 //        g.drawImage(ZBuffer.getBuffer().toBufferedImage(), 0, 0, this);
  //       g.drawImage(swapChain.getDiff(), 0, 0, this);
     }

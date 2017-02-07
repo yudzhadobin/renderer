@@ -7,6 +7,7 @@ import hse.light.FillType;
 import hse.matrixes.Matrix;
 import hse.matrixes.Projections;
 import hse.objects.ChangeableSupplier;
+import hse.objects.Normal;
 import hse.objects.Object3D;
 import hse.objects.Point3D;
 import hse.objects.Side;
@@ -72,6 +73,9 @@ public class Task {
                                 Point3D<Double> localPoint = object3D.getLocalPoints().get(
                                         pointInfo.getIndex()
                                 );
+
+                                pointInfo.setTransformedNormal(new Normal(rotation.multiple(pointInfo.getNormal())));
+
                                 Pair<ChangeableSupplier<Boolean>, Point3D<Double>> pair = object3D.getTransformedPoints().
                                         get(localPoint);
                                 if (!pair.getKey().get()) {

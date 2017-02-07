@@ -1,5 +1,7 @@
 package hse.objects;
 
+import java.util.DoubleSummaryStatistics;
+
 /**
  * Created by Yura on 03.01.2017.
  */
@@ -10,6 +12,11 @@ public class Normal extends Point3D<Double> {
         y = 0.0;
         z = 0.0;
     }
+
+    public Normal(Point3D<Double> point3D) {
+        super(point3D.getX(), point3D.getY(), point3D.getZ());
+    }
+
 
     public Normal(Double x, Double y, Double z) {
         super(x, y, z);

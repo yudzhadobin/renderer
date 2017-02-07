@@ -152,8 +152,8 @@ public class Side {
                 point.y += round((B.y - A.y) * phi);
                 point.z += round((B.z - A.z) * phi);
 
-                point.x += 600;
-                point.y = 500 - point.y;
+                point.x += 600 + object3D.getXMove();
+                point.y = 500 - point.y + object3D.getYMove();
 
                 if (ZBuffer.getBuffer().get(point.x, point.y) < point.z) {
 
@@ -314,9 +314,9 @@ public class Side {
         UvCoordinate bUv = new UvCoordinate(bInfo.getUvCoordinates());
         UvCoordinate cUv = new UvCoordinate(cInfo.getUvCoordinates());
 
-        double aIntensity = SimpleIntensity.calculateIntensity(aInfo.normal, isLightOn);
-        double bIntensity = SimpleIntensity.calculateIntensity(bInfo.normal, isLightOn);
-        double cIntensity = SimpleIntensity.calculateIntensity(cInfo.normal, isLightOn);
+        double aIntensity = SimpleIntensity.calculateIntensity(aInfo.transformedNormal, isLightOn);
+        double bIntensity = SimpleIntensity.calculateIntensity(bInfo.transformedNormal, isLightOn);
+        double cIntensity = SimpleIntensity.calculateIntensity(cInfo.transformedNormal, isLightOn);
 
         if (a.y > b.y) {
             a.swap(b);
@@ -448,9 +448,9 @@ public class Side {
         UvCoordinate bUv = new UvCoordinate(bInfo.getUvCoordinates());
         UvCoordinate cUv = new UvCoordinate(cInfo.getUvCoordinates());
 
-        Normal aNormal = aInfo.normal.copy();
-        Normal bNormal = bInfo.normal.copy();
-        Normal cNormal = cInfo.normal.copy();
+        Normal aNormal = aInfo.getTransformedNormal().copy();
+        Normal bNormal = bInfo.getTransformedNormal().copy();
+        Normal cNormal = cInfo.getTransformedNormal().copy();
 
         if (a.y > b.y) {
             a.swap(b);
