@@ -19,4 +19,17 @@ public class MoveMatrix extends Matrix {
         set(3, 1, y);
         set(3, 2, z);
     }
+
+    public int getX() {
+        return  get(0, 3).intValue();
+    }
+
+    public int getY() {
+        return  get(1, 3).intValue();
+    }
+
+    public int getZ() {
+        return  get(2, 3).intValue();
+    }
+
 }

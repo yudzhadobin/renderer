@@ -6,6 +6,7 @@ import com.sun.scenario.Settings;
 import hse.light.FillType;
 import hse.matrixes.Matrix;
 import hse.matrixes.Projections;
+import hse.matrixes.conversations.MoveMatrix;
 import hse.objects.ChangeableSupplier;
 import hse.objects.Normal;
 import hse.objects.Object3D;
@@ -40,7 +41,7 @@ public class Task {
     Object3D object3D;
 
     Matrix rotation;
-    Matrix move;
+    MoveMatrix move;
 
     FillType fillType;
 
@@ -53,7 +54,7 @@ public class Task {
         sidesToDraw.add(side);
     }
 
-    public Task(Matrix rotation, Matrix move, Object3D object3D, FillType fillType, boolean isLightOn, DrawingMode drawingMode) {
+    public Task(Matrix rotation, MoveMatrix move, Object3D object3D, FillType fillType, boolean isLightOn, DrawingMode drawingMode) {
         this.rotation = rotation;
         this.move = move;
         this.object3D = object3D;
@@ -92,15 +93,15 @@ public class Task {
         for (Side side : sidesToDraw) {
             switch (drawingMode) {
             case CONTOUR: {
-                side.drawContour(SwapChain.getInstance(), Setings.projection, object3D);
+                side.drawContour(SwapChain.getInstance(),  move, Setings.projection, object3D);
                 break;
             }
             case MODEL: {
-                side.drawFill(SwapChain.getInstance(), Setings.projection, object3D, isLightOn);
+                side.drawFill(SwapChain.getInstance(), move, Setings.projection, object3D, isLightOn);
                 break;
             }
             case TEXTURED: {
-                side.drawTextured(SwapChain.getInstance(), Setings.projection, object3D, fillType, isLightOn);
+                side.drawTextured(SwapChain.getInstance(),move, Setings.projection, object3D, fillType, isLightOn);
                 break;
             }
             }

@@ -52,8 +52,6 @@ public class PicturePanel extends JPanel {
             }
         });
     }
-
-
     @Override
     public void repaint() {
         if(swapChain != null) {

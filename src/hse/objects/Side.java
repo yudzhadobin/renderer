@@ -1,10 +1,12 @@
 package hse.objects;
 
+import hse.Setings;
 import hse.UvCoordinate;
 import hse.ZBuffer;
 import hse.light.FillType;
 import hse.light.SimpleIntensity;
 import hse.matrixes.Matrix;
+import hse.matrixes.conversations.MoveMatrix;
 import hse.ui.SwapChain;
 
 import java.awt.*;
@@ -64,7 +66,7 @@ public class Side {
     */
 
     @SuppressWarnings("unchecked")
-    public void drawContour(SwapChain swapChain, Matrix projection, Object3D object) {
+    public void drawContour(SwapChain swapChain, MoveMatrix move, Matrix projection, Object3D object) {
         Graphics graphics = swapChain.getDrawing().getGraphics();
 
         Point3D a = pointsInfo.get(0).point;
@@ -74,14 +76,16 @@ public class Side {
         Point3D<Double> convertedA = projection.multiple(a);
         Point3D<Double> convertedB = projection.multiple(b);
         Point3D<Double> convertedC = projection.multiple(c);
-        convertedA.setX(convertedA.getX() + 600);
-        convertedA.setY(500 - convertedA.getY());
 
-        convertedB.setX(convertedB.getX() + 600);
-        convertedB.setY(500 - convertedB.getY());
+        convertedA.setX(convertedA.getX() + 600 + move.getX());
+        convertedA.setY(500 - convertedA.getY() - move.getY());
 
-        convertedC.setX(convertedC.getX() + 600);
-        convertedC.setY(500 - convertedC.getY());
+        convertedB.setX(convertedB.getX() + 600 + move.getX());
+        convertedB.setY(500 - convertedB.getY() - move.getY());
+
+        convertedC.setX(convertedC.getX() + 600 + move.getX());
+        convertedC.setY(500 - convertedC.getY() - move.getY());
+
         graphics.drawLine(convertedA.x.intValue(), convertedA.y.intValue(), convertedB.x.intValue(), convertedB.y.intValue());
         graphics.drawLine(convertedB.x.intValue(), convertedB.y.intValue(), convertedC.x.intValue(), convertedC.y.intValue());
         graphics.drawLine(convertedC.x.intValue(), convertedC.y.intValue(), convertedA.x.intValue(), convertedA.y.intValue());
@@ -94,7 +98,7 @@ public class Side {
     }
 
     @SuppressWarnings("unchecked")
-    public void drawFill(SwapChain swapChain, Matrix projection, Object3D object3D, Boolean isLightOn) {
+    public void drawFill(SwapChain swapChain,MoveMatrix move, Matrix projection, Object3D object, Boolean isLightOn) {
         BufferedImage drawingPanel = swapChain.getDrawing();
 
 
@@ -152,14 +156,22 @@ public class Side {
                 point.y += round((B.y - A.y) * phi);
                 point.z += round((B.z - A.z) * phi);
 
-                point.x += 600 + object3D.getXMove();
-                point.y = 500 - point.y + object3D.getYMove();
+                int savedZ = point.z;
+                point = projection.multipleInteger(point);
 
-                if (ZBuffer.getBuffer().get(point.x, point.y) < point.z) {
+                point.x += 600 + move.getX();
+                point.y = 500 - point.y + move.getY();
+                savedZ += move.getZ();
 
-                    ZBuffer.getBuffer().set(point.x, point.y, point.z);
-                    drawingPanel.setRGB((int) (point.x), (int) (point.y), color.getRGB()); // attention, due to int casts convertedA.y+i != A.y
-                    object3D.box.extend(point);
+                if(!checkPointIsIn(point)) {
+                    continue;
+                }
+
+                if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
+
+                    ZBuffer.getBuffer().set(point.x, point.y, savedZ);
+                    drawingPanel.setRGB(point.x, point.y, color.getRGB());
+                    object.box.extend(point);
 
                 }
 
@@ -173,16 +185,16 @@ public class Side {
 
 
     @SuppressWarnings("unchecked")
-    public void drawTextured(SwapChain swapChain, Matrix projection, Object3D object, FillType fillType, Boolean isLightOn) {
+    public void drawTextured(SwapChain swapChain, MoveMatrix move, Matrix projection, Object3D object, FillType fillType, Boolean isLightOn) {
         switch (fillType) {
             case ORDINAL:
-                drawTexturedOrdinal(swapChain, projection, object, isLightOn);
+                drawTexturedOrdinal(swapChain, move, projection, object, isLightOn);
                 break;
             case GURO:
-                drawTexturedGuro(swapChain, projection, object, isLightOn);
+                drawTexturedGuro(swapChain, move, projection, object, isLightOn);
                 break;
             case FONG:
-                drawTexturedFong(swapChain, projection, object, isLightOn);
+                drawTexturedFong(swapChain, move, projection, object, isLightOn);
                 break;
         }
     }
@@ -190,7 +202,7 @@ public class Side {
 
 
     @SuppressWarnings("unchecked")
-    public void drawTexturedOrdinal(SwapChain swapChain, Matrix projection, Object3D object, Boolean isLightOn) {
+    public void drawTexturedOrdinal(SwapChain swapChain, MoveMatrix move, Matrix projection, Object3D object, Boolean isLightOn) {
         BufferedImage drawingPanel = swapChain.getDrawing();
 
 
@@ -281,10 +293,18 @@ public class Side {
                         0
                 );
 
-                point.x += 600;
-                point.y = 500 - point.y;
-                if (ZBuffer.getBuffer().get(point.x, point.y) < point.z) {
-                    ZBuffer.getBuffer().set(point.x, point.y, point.z);
+                int savedZ = point.z;
+                point = projection.multipleInteger(point);
+
+                point.x += 600 + move.getX();
+                point.y = 500 - point.y + move.getY();
+                savedZ += move.getZ();
+                if(!checkPointIsIn(point)) {
+                    continue;
+                }
+
+                if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
+                    ZBuffer.getBuffer().set(point.x, point.y, savedZ);
                     drawingPanel.setRGB(point.x, point.y, getRGB(intensity, object.getTexture()
                             .getRGB(uvPoint.getX(), uvPoint.getY())));
                     object.box.extend(point);
@@ -298,7 +318,7 @@ public class Side {
     }
 
     @SuppressWarnings("unchecked")
-    public void drawTexturedGuro(SwapChain swapChain, Matrix projection, Object3D object, Boolean isLightOn) {
+    public void drawTexturedGuro(SwapChain swapChain, MoveMatrix move, Matrix projection, Object3D object, Boolean isLightOn) {
         BufferedImage drawingPanel = swapChain.getDrawing();
 
 
@@ -412,9 +432,15 @@ public class Side {
                 double pointIntensity = intensityA + (intensityB - intensityA) * phi;
                 int savedZ = point.z;
                 point = projection.multipleInteger(point);
-                point.x += 600 + object.getXMove();
-                point.y = 500 - point.y + object.getYMove();
-                point.z += object.getYMove();
+
+                point.x += 600 + move.getX();
+                point.y = 500 - point.y + move.getY();
+                savedZ += move.getZ();
+
+                if(!checkPointIsIn(point)) {
+                    continue;
+                }
+
                 if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
                     ZBuffer.getBuffer().set(point.x, point.y, savedZ);
                     drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
@@ -432,7 +458,7 @@ public class Side {
     }
 
     @SuppressWarnings("unchecked")
-    public void drawTexturedFong(SwapChain swapChain, Matrix projection, Object3D object, Boolean isLightOn) {
+    public void drawTexturedFong(SwapChain swapChain, MoveMatrix move, Matrix projection, Object3D object, Boolean isLightOn) {
         BufferedImage drawingPanel = swapChain.getDrawing();
 
 
@@ -536,10 +562,16 @@ public class Side {
 
                 double pointIntensity = SimpleIntensity.calculateIntensity(new Normal().plus(
                         normalA.plus((normalB.minus(normalA).multiple(phi)))), isLightOn);
-                int savedZ = point.z;
+                int savedZ = point.z + move.getZ();
                 point = projection.multipleInteger(point);
-                point.x += 600;
-                point.y = 500 - point.y;
+
+                point.x += 600 + move.getX();
+                point.y = 500 - point.y + move.getY();
+
+                if(!checkPointIsIn(point)) {
+                    continue;
+                }
+
                 if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
                     ZBuffer.getBuffer().set(point.x, point.y, savedZ);
                     drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
@@ -587,7 +619,10 @@ public class Side {
         return result;
     }
 
-
+    private boolean checkPointIsIn(Point3D<Integer> point3D) {
+        return point3D.getX() > 0 && point3D.getY() > 0
+                && point3D.getX() < Setings.WINDOW_WIDTH && point3D.getY() < Setings.WINDOW_HEIGHT;
+    }
 
 }
 

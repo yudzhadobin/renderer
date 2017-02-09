@@ -93,7 +93,7 @@ public class Master {
 
                 do {
                     boolean flag = true;
-                    for (int i = 0; i < WORKERS_COUNT; i++) {
+                    for (int i = 0; i < WORKERS_COUNT * Stage.getInstance().getObjectCount(); i++) {
                         if (currentTasks.get(i).status != TaskStatus.FINISHED) {
                             flag = false;
                             break;
@@ -177,10 +177,8 @@ public class Master {
                 Matrix b = new RotationY(currentObject.getYRotation());
                 Matrix c = new RotationZ(currentObject.getZRotation());
                 Matrix scale = new Scale(currentObject.getScale());
-                currentObject.setXMove(Setings.offset_X);
-                currentObject.setYMove(Setings.offset_Y);
-                currentObject.setZMove(Setings.offset_Z);
-                Matrix move = new MoveMatrix(Setings.offset_X, Setings.offset_Y, Setings.offset_Z);
+
+                MoveMatrix move = new MoveMatrix(currentObject.getXMove(), currentObject.getYMove(), currentObject.getZMove());
                 Matrix conversations = a.multiple(b).multiple(c).multiple(scale);
 
                 nextTasks.add(new Task(conversations, move, stage.getObject(j), FillType.GURO, isLightOn, mode));
@@ -191,7 +189,7 @@ public class Master {
             currentObject = stage.getObject(j);
             for (int i = 0; i < currentObject.getSides().size(); i++) {
                 Side curSide = currentObject.getSides().get(i);
-                nextTasks.get(i % WORKERS_COUNT * 2 + j).addSide(curSide);
+                nextTasks.get(i % WORKERS_COUNT * Stage.getInstance().getObjectCount() + j).addSide(curSide);
             }
         }
 
