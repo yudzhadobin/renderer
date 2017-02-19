@@ -28,7 +28,7 @@ public class PicturePanel extends JPanel {
         this.swapChain = SwapChain.getInstance();
 
 //        BufferedImage bufferedImage = new BufferedImage(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
-        this.setDoubleBuffered(true);
+        this.setDoubleBuffered(false);
         this.setSize(new Dimension(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT));
 
         this.setVisible(true);
@@ -52,26 +52,39 @@ public class PicturePanel extends JPanel {
             }
         });
     }
+
+    boolean isMyUpdate = false;
+
+
+    public void forceUpdate() {
+        isMyUpdate = true;
+        repaint();
+    }
+
     @Override
     public void repaint() {
+        if (!isMyUpdate) {
+            return;
+        }
+
+
         if(swapChain != null) {
             swapChain.swap();
         }
         super.repaint();
-
+        isMyUpdate = false;
     }
     long lastUpdate = 0;
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponents(g);
+        long time = System.currentTimeMillis();
 
         g.drawImage(swapChain.getVisible(), 0, 0, this);
-        long time = System.currentTimeMillis();
+
         System.out.println(time - lastUpdate);
         lastUpdate = time;
-//        g.drawImage(ZBuffer.getBuffer().toBufferedImage(), 0, 0, this);
- //       g.drawImage(swapChain.getDiff(), 0, 0, this);
     }
 }
 

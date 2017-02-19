@@ -16,7 +16,7 @@ public class PerspectiveProjection extends Matrix {
         set(1, 1, 1);
         set(3, 3, 1);
 
-        set(3, 2, 0.5);
+        set(3, 2, -0.5);
         int j=5;
         //// TODO: 04.01.2017  may be need to rewrite multiple and divide
     }

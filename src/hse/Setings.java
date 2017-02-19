@@ -12,8 +12,8 @@ public class Setings {
     public static int offset_Y = 0;
     public static int offset_Z = 0;
 
-    public static int WINDOW_HEIGHT = 1240;
-    public static int WINDOW_WIDTH = 1240;
+    public static int WINDOW_HEIGHT = 800;
+    public static int WINDOW_WIDTH = 800;
 
     public static boolean light_on = true;
 

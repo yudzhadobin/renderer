@@ -24,6 +24,7 @@ public class MainForm extends JFrame {
         this.setResizable(false);
         picturePanel = new PicturePanel();
         picturePanel.validate();
+
         picturePanel.setVisible(true);
         this.getContentPane().add(picturePanel);
 

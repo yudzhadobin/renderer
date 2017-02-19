@@ -1,5 +1,6 @@
 package hse.objects;
 
+import com.sun.prism.image.ViewPort;
 import hse.Setings;
 import hse.UvCoordinate;
 import hse.ZBuffer;
@@ -11,6 +12,7 @@ import hse.ui.SwapChain;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
 /**
@@ -73,18 +75,22 @@ public class Side {
         Point3D b = pointsInfo.get(1).point;
         Point3D c = pointsInfo.get(2).point;
 
-        Point3D<Double> convertedA = projection.multiple(a);
-        Point3D<Double> convertedB = projection.multiple(b);
-        Point3D<Double> convertedC = projection.multiple(c);
+        Matrix lookat = Camera.getInstance().lookat();
+        Matrix viewPort = Camera.getInstance().viewport(600,600);
 
-        convertedA.setX(convertedA.getX() + 600 + move.getX());
-        convertedA.setY(500 - convertedA.getY() - move.getY());
 
-        convertedB.setX(convertedB.getX() + 600 + move.getX());
-        convertedB.setY(500 - convertedB.getY() - move.getY());
+        Point3D<Double> convertedA = lookat.multiple(viewPort.multiple(projection).multiple(a));
+        Point3D<Double> convertedB = lookat.multiple(viewPort.multiple(projection).multiple(b));
+        Point3D<Double> convertedC = lookat.multiple(viewPort.multiple(projection).multiple(c));
 
-        convertedC.setX(convertedC.getX() + 600 + move.getX());
-        convertedC.setY(500 - convertedC.getY() - move.getY());
+        convertedA.setX(700 + convertedA.getX());
+        convertedA.setY(500 - convertedA.getY());
+
+        convertedB.setX(700 + convertedB.getX());
+        convertedB.setY(500 - convertedB.getY());
+
+        convertedC.setX(700 + convertedC.getX());
+        convertedC.setY(500 - convertedC.getY());
 
         graphics.drawLine(convertedA.x.intValue(), convertedA.y.intValue(), convertedB.x.intValue(), convertedB.y.intValue());
         graphics.drawLine(convertedB.x.intValue(), convertedB.y.intValue(), convertedC.x.intValue(), convertedC.y.intValue());
@@ -100,6 +106,11 @@ public class Side {
     @SuppressWarnings("unchecked")
     public void drawFill(SwapChain swapChain,MoveMatrix move, Matrix projection, Object3D object, Boolean isLightOn) {
         BufferedImage drawingPanel = swapChain.getDrawing();
+
+        // TODO: 20.02.17 optimaze
+        Matrix lookat = Camera.getInstance().lookat();
+        Matrix viewPort = Camera.getInstance().viewport(600,600);
+
 
 
         Point3D<Integer> a = transform(pointsInfo.get(0).point);
@@ -157,23 +168,23 @@ public class Side {
                 point.z += round((B.z - A.z) * phi);
 
                 int savedZ = point.z;
-                point = projection.multipleInteger(point);
+                //point = projection.multipleInteger(point);
 
-                point.x += 600 + move.getX();
-                point.y = 500 - point.y + move.getY();
-                savedZ += move.getZ();
+                point = lookat.multipleInteger(viewPort.multiple(projection).multipleInteger(point));
+                point.setX(point.getX() + 700);
+                point.setY(500 - point.getY());
 
                 if(!checkPointIsIn(point)) {
                     continue;
                 }
 
-                if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
+               // if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
 
                     ZBuffer.getBuffer().set(point.x, point.y, savedZ);
                     drawingPanel.setRGB(point.x, point.y, color.getRGB());
                     object.box.extend(point);
 
-                }
+                //}
 
 
             }

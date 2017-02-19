@@ -8,22 +8,20 @@ import hse.matrixes.conversations.RotationX;
 import hse.matrixes.conversations.RotationY;
 import hse.matrixes.conversations.RotationZ;
 import hse.matrixes.conversations.Scale;
+import hse.objects.Camera;
 import hse.objects.Object3D;
 import hse.objects.Side;
 import hse.ui.MainForm;
 import hse.ui.SwapChain;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Created by Yura on 04.01.2017.
+ * Created by Yura on 04.01.Stage.getInstance().017.
  */
 public class Master {
 
@@ -81,19 +79,23 @@ public class Master {
             synchronized (swapThreadLock) {
 
                 currentTasks = nextTasks;
-                nextTasks = new ArrayList<>();// TODO: 05.01.2017 rewrite
+                nextTasks = new ArrayList<>();
                 synchronized (taskThreadLock) {
                     taskThreadLock.notify();
                 }
 
                 for (int i = 0; i < WORKERS_COUNT; i++) {
-                    workers.get(i).setTask(currentTasks.subList(i * 2, i * 2 + 2));
+                    workers.get(i).setTask(
+                            currentTasks.subList(
+                                    i * Stage.getInstance().getObjectCount(),
+                                    i * Stage.getInstance().getObjectCount() + Stage.getInstance().getObjectCount())
+                    );
                 }
 
 
                 do {
                     boolean flag = true;
-                    for (int i = 0; i < WORKERS_COUNT * Stage.getInstance().getObjectCount(); i++) {
+                    for (int i = 0; i < currentTasks.size(); i++) {
                         if (currentTasks.get(i).status != TaskStatus.FINISHED) {
                             flag = false;
                             break;
@@ -106,17 +108,9 @@ public class Master {
                                 object3D.getBox().draw(SwapChain.getInstance());
                             });
                         }
-
-                        //                        object3D.getBox().draw(SwapChain.getInstance());
-//                        long maxTime = -10;
-//                        for (int i = 0; i < currentTasks.size(); i++) {
-//                            maxTime = currentTasks.get(i).getTime() > maxTime ? currentTasks.get(i).getTime() : maxTime;
-//                        }
-//                        System.out.println(maxTime);
-                        form.picturePanel.repaint();
+                        form.picturePanel.forceUpdate();
                         ZBuffer.getBuffer().clear();
                         Stage.getInstance().getDisplayedObjects().forEach(Object3D::clear);
-
                         break;
                     } else {
                         try {
@@ -137,32 +131,6 @@ public class Master {
             }
         } while (true);
     }
-/*
-//    int rotate = 0;
-    private void createTasks() {
-        Matrix a = new RotationX(object3D.getXRotation());
-        Matrix b = new RotationY(object3D.getYRotation());
-        Matrix c = new RotationZ(object3D.getZRotation());
-        Matrix scale = new Scale(object3D.getScale());
-        object3D.setXMove(Setings.offset_X);
-        object3D.setYMove(Setings.offset_Y);
-        object3D.setZMove(Setings.offset_Z);
-        Matrix move = new MoveMatrix(Setings.offset_X, Setings.offset_Y, Setings.offset_Z);
-        Matrix conversations = a.multiple(b).multiple(c).multiple(scale);
-        DrawingMode mode = Setings.drawingMode;
-        boolean isLightOn = Setings.light_on;
-
-        for (int i = 0; i < WORKERS_COUNT; i++) {
-            nextTasks.add(new Task(conversations, move, object3D, FillType.GURO, isLightOn, mode));
-        }
-
-        for (int i = 0; i < object3D.getSides().size(); i++) {
-            Side curSide = object3D.getSides().get(i);
-            nextTasks.get(i % WORKERS_COUNT).addSide(curSide);
-        }
-
-
-    }*/
 
     private void createTasks(Stage stage) {
 
@@ -176,12 +144,16 @@ public class Master {
                 Matrix a = new RotationX(currentObject.getXRotation());
                 Matrix b = new RotationY(currentObject.getYRotation());
                 Matrix c = new RotationZ(currentObject.getZRotation());
-                Matrix scale = new Scale(currentObject.getScale());
+                Matrix scale = new Scale(5);
 
                 MoveMatrix move = new MoveMatrix(currentObject.getXMove(), currentObject.getYMove(), currentObject.getZMove());
                 Matrix conversations = a.multiple(b).multiple(c).multiple(scale);
+                conversations.set(0,3, currentObject.getXMove());
+                conversations.set(1,3, currentObject.getYMove());
+                conversations.set(2,3, currentObject.getZMove());
 
-                nextTasks.add(new Task(conversations, move, stage.getObject(j), FillType.GURO, isLightOn, mode));
+//                System.out.println(co/nversations);
+                nextTasks.add(new Task(conversations, move, stage.getObject(j), FillType.FONG, isLightOn, mode));
             }
         }
 
@@ -192,6 +164,8 @@ public class Master {
                 nextTasks.get(i % WORKERS_COUNT * Stage.getInstance().getObjectCount() + j).addSide(curSide);
             }
         }
-
+//        Double x = Camera.getInstance().c.getX() + 1;
+//        Camera.getInstance().c.setX(x);
+//        System.out.println("camera z = " + x);
     }
 }

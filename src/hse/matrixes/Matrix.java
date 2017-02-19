@@ -33,6 +33,16 @@ public class Matrix {
         }
     }
 
+    public static Matrix getIdenity() {
+        Matrix result = new Matrix(4,4);
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                result.set(i, j, i == j ? 1.d : 0.d);
+            }
+        }
+        return result;
+    }
+
     public void set(int i, int j, double value) {
         matrix.get(i).set(j, value);//right
     }
@@ -55,6 +65,7 @@ public class Matrix {
 
         return result;
     }
+
 
     public void multipleInPlace(Point3D<Double> point) {
         Point3D<Double> result = multiple(point);

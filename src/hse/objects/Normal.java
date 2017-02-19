@@ -1,7 +1,9 @@
 package hse.objects;
 
-import java.util.DoubleSummaryStatistics;
+import com.sun.org.apache.regexp.internal.RESyntaxException;
 
+import java.util.DoubleSummaryStatistics;
+import static java.lang.Math.*;
 /**
  * Created by Yura on 03.01.2017.
  */
@@ -27,26 +29,49 @@ public class Normal extends Point3D<Double> {
     }
 
     public Normal plus(Normal another) {
-        this.x += another.x;
-        this.y += another.y;
-        this.z += another.z;
+        Normal result = new Normal(this);
 
-        return this;
+        result.x += another.x;
+        result.y += another.y;
+        result.z += another.z;
+
+        return result;
     }
 
     public Normal minus(Normal another) {
-        this.x -= another.x;
-        this.y -= another.y;
-        this.z -= another.z;
-        return this;
+        Normal result = new Normal(this);
+        result.x -= another.x;
+        result.y -= another.y;
+        result.z -= another.z;
+        return result;
     }
 
     public Normal multiple(double value) {
-        this.x *= value;
-        this.y *= value;
-        this.z *= value;
+        Normal result = new Normal(this);
+        result.x *= value;
+        result.y *= value;
+        result.z *= value;
+        return result;
+    }
+
+    public Normal normalize() {
+        double length = sqrt(pow(x, 2) + pow(y, 2) + pow(z,2));
+        this.x /= length;
+        this.y /= length;
+        this.z /= length;
         return this;
     }
+
+    public Normal cross(Normal another) {
+        Normal result = new Normal();
+
+        result.setX(this.getY() * another.getZ() - this.getZ() * another.getY());
+        result.setY(this.getX() * another.getZ() - this.getZ() * another.getX());
+        result.setZ(this.getX() * another.getY() - this.getY() * another.getX());
+
+        return result;
+    }
+
     @Override
     public String toString() {
         return "x = " + x + ", y = " + y + ", z = " + z;

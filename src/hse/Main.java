@@ -9,6 +9,7 @@ import hse.matrixes.OrthogonalProjection;
 import hse.matrixes.PerspectiveProjection;
 import hse.matrixes.conversations.RotationX;
 import hse.matrixes.conversations.RotationY;
+import hse.objects.Camera;
 import hse.objects.Object3D;
 import hse.objects.Point3D;
 import hse.ui.MainForm;
@@ -25,6 +26,9 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException {
 
+
+        Camera camera = new Camera();
+        camera.lookat();
 //        Object3D fromFile = Object3D.createFromFile(Paths.get("./models/head.obj"));
         EventQueue.invokeLater(() -> {
             form = new MainForm();
@@ -33,7 +37,10 @@ public class Main {
 
         Thread.currentThread().sleep(1000);
         Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/head.obj")));
-        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
+//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
+//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
+//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
+//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
         Master master = new Master(form);
 
     }

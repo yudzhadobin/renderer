@@ -51,7 +51,7 @@ public class Object3D {
     BufferedImage texture;
 
     BoundingBox box = new BoundingBox();
-    private int scale = 100;
+    private int scale = 1;
 
     public void setTexture(BufferedImage texture) {
         this.texture = texture;
