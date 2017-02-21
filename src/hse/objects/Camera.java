@@ -2,8 +2,6 @@ package hse.objects;
 
 import hse.Setings;
 import hse.matrixes.Matrix;
-import org.omg.PortableInterceptor.INACTIVE;
-import sun.jvm.hotspot.utilities.IntArray;
 
 /**
  * Created by yuriy on 18.02.17.
@@ -18,8 +16,8 @@ public class Camera {
     }
 
 
-    public Normal eye = new Normal(0d,-0d, 0d).normalize();
-    public Normal c = new Normal(-0d, 00d, -0d).normalize();
+    public Normal eye = new Normal(0d, -20d, 20d).normalize();
+    public Normal c = new Normal(-0d, 00d, 0.5d).normalize();
 
     Normal up = new Normal(-0d,-1d, 0d).normalize();
 

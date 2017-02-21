@@ -8,20 +8,22 @@ import hse.matrixes.conversations.RotationX;
 import hse.matrixes.conversations.RotationY;
 import hse.matrixes.conversations.RotationZ;
 import hse.matrixes.conversations.Scale;
-import hse.objects.Camera;
 import hse.objects.Object3D;
 import hse.objects.Side;
 import hse.ui.MainForm;
 import hse.ui.SwapChain;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Created by Yura on 04.01.Stage.getInstance().017.
+ * Created by Yura on 04.01.2017.
  */
 public class Master {
 
@@ -144,7 +146,7 @@ public class Master {
                 Matrix a = new RotationX(currentObject.getXRotation());
                 Matrix b = new RotationY(currentObject.getYRotation());
                 Matrix c = new RotationZ(currentObject.getZRotation());
-                Matrix scale = new Scale(5);
+                Matrix scale = new Scale(currentObject.getScale());
 
                 MoveMatrix move = new MoveMatrix(currentObject.getXMove(), currentObject.getYMove(), currentObject.getZMove());
                 Matrix conversations = a.multiple(b).multiple(c).multiple(scale);
@@ -164,8 +166,6 @@ public class Master {
                 nextTasks.get(i % WORKERS_COUNT * Stage.getInstance().getObjectCount() + j).addSide(curSide);
             }
         }
-        Double x = Camera.getInstance().eye.getY() + 1;
-        Camera.getInstance().eye.setY(x);
-        System.out.println("camera z = " + x);
+
     }
 }

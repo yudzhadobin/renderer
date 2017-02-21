@@ -94,7 +94,7 @@ public class SettingsForm extends JFrame {
     }
 
     private void initScale() {
-        SpinnerModel sm = new SpinnerNumberModel(100, 0, 500, 10); //default value,lower bound,upper bound,increment by
+        SpinnerModel sm = new SpinnerNumberModel(1, 0, 500, 1); //default value,lower bound,upper bound,increment by
         scale.setModel(sm);
         scale.addChangeListener(
                 e -> {

@@ -84,15 +84,6 @@ public class Side {
         Point3D<Double> convertedB = lookat.multiple(viewPort.multiple(projection).multiple(b));
         Point3D<Double> convertedC = lookat.multiple(viewPort.multiple(projection).multiple(c));
 
-//        convertedA.setX(700 + convertedA.getX());
-//        convertedA.setY(500 - convertedA.getY());
-//
-//        convertedB.setX(700 + convertedB.getX());
-//        convertedB.setY(500 - convertedB.getY());
-//
-//        convertedC.setX(700 + convertedC.getX());
-//        convertedC.setY(500 - convertedC.getY());
-
         graphics.drawLine(convertedA.x.intValue(), convertedA.y.intValue(), convertedB.x.intValue(), convertedB.y.intValue());
         graphics.drawLine(convertedB.x.intValue(), convertedB.y.intValue(), convertedC.x.intValue(), convertedC.y.intValue());
         graphics.drawLine(convertedC.x.intValue(), convertedC.y.intValue(), convertedA.x.intValue(), convertedA.y.intValue());
