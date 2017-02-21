@@ -76,21 +76,22 @@ public class Side {
         Point3D c = pointsInfo.get(2).point;
 
         Matrix lookat = Camera.getInstance().lookat();
-        Matrix viewPort = Camera.getInstance().viewport(600,600);
+        Matrix viewPort = Camera.getInstance().viewport(300,300);
 
 
+        
         Point3D<Double> convertedA = lookat.multiple(viewPort.multiple(projection).multiple(a));
         Point3D<Double> convertedB = lookat.multiple(viewPort.multiple(projection).multiple(b));
         Point3D<Double> convertedC = lookat.multiple(viewPort.multiple(projection).multiple(c));
 
-        convertedA.setX(700 + convertedA.getX());
-        convertedA.setY(500 - convertedA.getY());
-
-        convertedB.setX(700 + convertedB.getX());
-        convertedB.setY(500 - convertedB.getY());
-
-        convertedC.setX(700 + convertedC.getX());
-        convertedC.setY(500 - convertedC.getY());
+//        convertedA.setX(700 + convertedA.getX());
+//        convertedA.setY(500 - convertedA.getY());
+//
+//        convertedB.setX(700 + convertedB.getX());
+//        convertedB.setY(500 - convertedB.getY());
+//
+//        convertedC.setX(700 + convertedC.getX());
+//        convertedC.setY(500 - convertedC.getY());
 
         graphics.drawLine(convertedA.x.intValue(), convertedA.y.intValue(), convertedB.x.intValue(), convertedB.y.intValue());
         graphics.drawLine(convertedB.x.intValue(), convertedB.y.intValue(), convertedC.x.intValue(), convertedC.y.intValue());

@@ -18,8 +18,8 @@ public class Camera {
     }
 
 
-    public Normal eye = new Normal(500d,-500d,200d).normalize();
-    public Normal c = new Normal(-0d, 00d, -38d).normalize();
+    public Normal eye = new Normal(0d,-0d, 0d).normalize();
+    public Normal c = new Normal(-0d, 00d, -0d).normalize();
 
     Normal up = new Normal(-0d,-1d, 0d).normalize();
 

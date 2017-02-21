@@ -164,8 +164,8 @@ public class Master {
                 nextTasks.get(i % WORKERS_COUNT * Stage.getInstance().getObjectCount() + j).addSide(curSide);
             }
         }
-//        Double x = Camera.getInstance().c.getX() + 1;
-//        Camera.getInstance().c.setX(x);
-//        System.out.println("camera z = " + x);
+        Double x = Camera.getInstance().eye.getY() + 1;
+        Camera.getInstance().eye.setY(x);
+        System.out.println("camera z = " + x);
     }
 }
