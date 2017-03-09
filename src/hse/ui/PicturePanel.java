@@ -87,6 +87,8 @@ public class PicturePanel extends JPanel {
 
 //        System.out.println(time - lastUpdate);
         lastUpdate = time;
+//        g.drawImage(ZBuffer.getBuffer().toBufferedImage(), 0, 0, this);
+ //       g.drawImage(swapChain.getDiff(), 0, 0, this);
     }
 }
 

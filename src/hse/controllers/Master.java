@@ -50,7 +50,6 @@ public class Master implements Updater{
         this.form = form;
 
     }
-
     void generateTasks() {
         boolean isFirst = true;
         do {
