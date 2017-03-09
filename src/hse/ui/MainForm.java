@@ -1,6 +1,7 @@
 package hse.ui;
 
 import hse.Setings;
+import hse.controllers.ChangeController;
 import hse.objects.Object3D;
 
 import javax.swing.*;
@@ -12,25 +13,24 @@ import java.awt.*;
 public class MainForm extends JFrame {
 
 
-
     public PicturePanel picturePanel;
 
-    public MainForm() {
+    public MainForm(boolean isAutoDraw) {
         super();
-
 
         this.setSize(new Dimension(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT));
 
         this.setResizable(false);
-        picturePanel = new PicturePanel();
-        picturePanel.validate();
-
-        picturePanel.setVisible(true);
-        this.getContentPane().add(picturePanel);
 
     }
 
+    public void initPicturePanel(ChangeController controller){
+        picturePanel = new PicturePanel(controller);
+        picturePanel.validate();
+        picturePanel.setVisible(true);
 
+        this.getContentPane().add(picturePanel);
+    }
 
 
     @Override

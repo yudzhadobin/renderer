@@ -2,6 +2,7 @@ package hse.objects;
 
 import hse.TGALoader;
 import hse.UvCoordinate;
+import hse.controllers.change.Direction;
 import hse.matrixes.Matrix;
 import hse.matrixes.Projections;
 import hse.matrixes.conversations.Scale;
@@ -24,6 +25,8 @@ import java.util.function.Supplier;
  * Created by Yura on 01.01.2017.
  */
 public class Object3D {
+
+    public String id;
     List<Point3D<Double>> localPoints;
 
     Map<Point3D<Double>,Pair<ChangeableSupplier<Boolean>, Point3D<Double>>> transformedPoints;
@@ -38,11 +41,11 @@ public class Object3D {
             add(0);
         }
     };
-    List<Integer> move = new ArrayList<Integer>() {
+    List<Double> move = new ArrayList<Double>() {
         {
-            add(0);
-            add(0);
-            add(0);
+            add(0.0d);
+            add(0.0d);
+            add(0.0d);
         }
     };
 
@@ -180,6 +183,13 @@ public class Object3D {
         box.clear();
     }
 
+    public void setMove(Direction direction, double value) {
+        this.move.set(direction.ordinal(), value);
+    }
+
+    public void setRotation(Direction direction, int value) {
+        this.rotations.set(direction.ordinal(), value);
+    }
 
     public void setXRotation(int x) {
         this.rotations.set(0, x);
@@ -205,28 +215,27 @@ public class Object3D {
         return rotations.get(2);
     }
 
-
-    public void setXMove(int x) {
+    public void setXMove(double x) {
         this.move.set(0, x);
     }
 
-    public void setYMove(int y) {
+    public void setYMove(double y) {
         this.move.set(1, y);
     }
 
-    public void setZMove(int z) {
+    public void setZMove(double z) {
         this.move.set(2, z);
     }
 
-    public int getXMove() {
+    public double getXMove() {
         return move.get(0);
     }
 
-    public int getYMove() {
+    public double getYMove() {
         return move.get(1);
     }
 
-    public int getZMove() {
+    public double getZMove() {
         return move.get(2);
     }
 

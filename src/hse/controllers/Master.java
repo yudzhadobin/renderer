@@ -1,6 +1,7 @@
-package hse;
+package hse.controllers;
 
-import com.sun.scenario.Settings;
+import hse.*;
+import hse.controllers.Task;
 import hse.light.FillType;
 import hse.matrixes.Matrix;
 import hse.matrixes.conversations.MoveMatrix;
@@ -8,7 +9,6 @@ import hse.matrixes.conversations.RotationX;
 import hse.matrixes.conversations.RotationY;
 import hse.matrixes.conversations.RotationZ;
 import hse.matrixes.conversations.Scale;
-import hse.objects.Camera;
 import hse.objects.Object3D;
 import hse.objects.Side;
 import hse.ui.MainForm;
@@ -16,14 +16,12 @@ import hse.ui.SwapChain;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Created by Yura on 04.01.Stage.getInstance().017.
  */
-public class Master {
+public class Master implements Updater{
 
 
     public static final int WORKERS_COUNT = 3;
@@ -52,6 +50,7 @@ public class Master {
         this.form = form;
 
     }
+
     void generateTasks() {
         boolean isFirst = true;
         do {
@@ -108,13 +107,15 @@ public class Master {
                                 object3D.getBox().draw(SwapChain.getInstance());
                             });
                         }
-                        form.picturePanel.forceUpdate();
+                        if(form.picturePanel != null) {
+                            form.picturePanel.forceUpdate();
+                        }
                         ZBuffer.getBuffer().clear();
                         Stage.getInstance().getDisplayedObjects().forEach(Object3D::clear);
                         break;
                     } else {
                         try {
-                            Thread.currentThread().sleep(10);
+                            Thread.currentThread().sleep(5);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -144,7 +145,7 @@ public class Master {
                 Matrix a = new RotationX(currentObject.getXRotation());
                 Matrix b = new RotationY(currentObject.getYRotation());
                 Matrix c = new RotationZ(currentObject.getZRotation());
-                Matrix scale = new Scale(5);
+                Matrix scale = new Scale(currentObject.getScale());
 
                 MoveMatrix move = new MoveMatrix(currentObject.getXMove(), currentObject.getYMove(), currentObject.getZMove());
                 Matrix conversations = a.multiple(b).multiple(c).multiple(scale);
@@ -153,7 +154,7 @@ public class Master {
                 conversations.set(2,3, currentObject.getZMove());
 
 //                System.out.println(co/nversations);
-                nextTasks.add(new Task(conversations, move, stage.getObject(j), FillType.FONG, isLightOn, mode));
+                nextTasks.add(new Task(conversations, move, stage.getObject(j), FillType.ORDINAL, isLightOn, mode));
             }
         }
 
@@ -164,8 +165,11 @@ public class Master {
                 nextTasks.get(i % WORKERS_COUNT * Stage.getInstance().getObjectCount() + j).addSide(curSide);
             }
         }
-        Double x = Camera.getInstance().eye.getY() + 1;
-        Camera.getInstance().eye.setY(x);
-        System.out.println("camera z = " + x);
+
+    }
+
+    @Override
+    public void redraw() {
+        //do nothing its auto update
     }
 }

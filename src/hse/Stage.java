@@ -38,6 +38,17 @@ public class Stage {
         return displayedObjects.get(index);
     }
 
+
+    public Object3D getObject(String id) {
+        for (Object3D displayedObject : displayedObjects) {
+
+            if (displayedObject.id.equals(id)) {
+                return displayedObject;
+            }
+        }
+        return null;
+    }
+
     public List<Object3D> getDisplayedObjects() {
         return displayedObjects;
     }

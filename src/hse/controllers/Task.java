@@ -1,17 +1,16 @@
-package hse;
+package hse.controllers;
 
 import com.sun.org.apache.xerces.internal.impl.dv.xs.DoubleDV;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.sun.scenario.Settings;
+import hse.DrawingMode;
+import hse.Setings;
+import hse.TaskStatus;
 import hse.light.FillType;
 import hse.matrixes.Matrix;
 import hse.matrixes.Projections;
 import hse.matrixes.conversations.MoveMatrix;
-import hse.objects.ChangeableSupplier;
-import hse.objects.Normal;
-import hse.objects.Object3D;
-import hse.objects.Point3D;
-import hse.objects.Side;
+import hse.objects.*;
 import hse.ui.SettingsForm;
 import hse.ui.SwapChain;
 import javafx.util.Pair;
@@ -67,6 +66,9 @@ public class Task {
         time = System.currentTimeMillis();
         status = TaskStatus.WORKING;
 
+        Matrix lookat = Camera.getInstance().lookat();
+        Matrix viewPort = Camera.getInstance().viewport(300,300);
+
         sidesToDraw.forEach(
                 side -> {
                     side.getPointsInfo().forEach(
@@ -81,7 +83,8 @@ public class Task {
                                         get(localPoint);
                                 if (!pair.getKey().get()) {
                                     Point3D<Double> point3D = pair.getValue();
-                                    point3D.swap(rotation.multiple(localPoint));
+                                    Point3D<Double> converted = lookat.multiple(viewPort.multiple(Setings.projection).multiple(rotation.multiple(localPoint)));
+                                    point3D.swap( converted);
 
                                     pair.getKey().set(true);
                                 }

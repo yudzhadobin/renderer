@@ -79,10 +79,14 @@ public class Side {
         Matrix viewPort = Camera.getInstance().viewport(300,300);
 
 
-        
-        Point3D<Double> convertedA = lookat.multiple(viewPort.multiple(projection).multiple(a));
-        Point3D<Double> convertedB = lookat.multiple(viewPort.multiple(projection).multiple(b));
-        Point3D<Double> convertedC = lookat.multiple(viewPort.multiple(projection).multiple(c));
+        Point3D<Double> convertedA = a;
+        Point3D<Double> convertedB = b;
+        Point3D<Double> convertedC = c;
+
+
+//        Point3D<Double> convertedA = lookat.multiple(viewPort.multiple(projection).multiple(a));
+//        Point3D<Double> convertedB = lookat.multiple(viewPort.multiple(projection).multiple(b));
+//        Point3D<Double> convertedC = lookat.multiple(viewPort.multiple(projection).multiple(c));
 
 //        convertedA.setX(700 + convertedA.getX());
 //        convertedA.setY(500 - convertedA.getY());
@@ -97,22 +101,19 @@ public class Side {
         graphics.drawLine(convertedB.x.intValue(), convertedB.y.intValue(), convertedC.x.intValue(), convertedC.y.intValue());
         graphics.drawLine(convertedC.x.intValue(), convertedC.y.intValue(), convertedA.x.intValue(), convertedA.y.intValue());
 
-        object.box.extend(new Point3D<>(convertedA.getX().intValue(), convertedA.getY().intValue(), convertedA.getZ().intValue()));
-        object.box.extend(new Point3D<>(convertedB.getX().intValue(), convertedB.getY().intValue(), convertedB.getZ().intValue()));
-        object.box.extend(new Point3D<>(convertedC.getX().intValue(), convertedC.getY().intValue(), convertedC.getZ().intValue()));
+//        object.box.extend(new Point3D<>(convertedA.getX().intValue(), convertedA.getY().intValue(), convertedA.getZ().intValue()));
+//        object.box.extend(new Point3D<>(convertedB.getX().intValue(), convertedB.getY().intValue(), convertedB.getZ().intValue()));
+//        object.box.extend(new Point3D<>(convertedC.getX().intValue(), convertedC.getY().intValue(), convertedC.getZ().intValue()));
 
+        object.box.extend(transform(convertedA));
+        object.box.extend(transform(convertedB));
+        object.box.extend(transform(convertedC));
 
     }
 
     @SuppressWarnings("unchecked")
     public void drawFill(SwapChain swapChain,MoveMatrix move, Matrix projection, Object3D object, Boolean isLightOn) {
         BufferedImage drawingPanel = swapChain.getDrawing();
-
-        // TODO: 20.02.17 optimaze
-        Matrix lookat = Camera.getInstance().lookat();
-        Matrix viewPort = Camera.getInstance().viewport(600,600);
-
-
 
         Point3D<Integer> a = transform(pointsInfo.get(0).point);
         Point3D<Integer> b = transform(pointsInfo.get(1).point);
@@ -171,21 +172,17 @@ public class Side {
                 int savedZ = point.z;
                 //point = projection.multipleInteger(point);
 
-                point = lookat.multipleInteger(viewPort.multiple(projection).multipleInteger(point));
-                point.setX(point.getX() + 700);
-                point.setY(500 - point.getY());
 
                 if(!checkPointIsIn(point)) {
                     continue;
                 }
-
-               // if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
+                if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
 
                     ZBuffer.getBuffer().set(point.x, point.y, savedZ);
                     drawingPanel.setRGB(point.x, point.y, color.getRGB());
                     object.box.extend(point);
 
-                //}
+                }
 
 
             }
@@ -304,13 +301,13 @@ public class Side {
                         (int) (uvPointA.getY() + (uvPointB.getY() - uvPointA.getY()) * phi),
                         0
                 );
-
+//
                 int savedZ = point.z;
-                point = projection.multipleInteger(point);
-
-                point.x += 600 + move.getX();
-                point.y = 500 - point.y + move.getY();
-                savedZ += move.getZ();
+//                point = projection.multipleInteger(point);
+//
+//                point.x += 600 + move.getX();
+//                point.y = 500 - point.y + move.getY();
+//                savedZ += move.getZ();
                 if(!checkPointIsIn(point)) {
                     continue;
                 }
@@ -574,11 +571,7 @@ public class Side {
 
                 double pointIntensity = SimpleIntensity.calculateIntensity(new Normal().plus(
                         normalA.plus((normalB.minus(normalA).multiple(phi)))), isLightOn);
-                int savedZ = point.z + move.getZ();
-                point = projection.multipleInteger(point);
-
-                point.x += 600 + move.getX();
-                point.y = 500 - point.y + move.getY();
+                int savedZ = point.z;
 
                 if(!checkPointIsIn(point)) {
                     continue;

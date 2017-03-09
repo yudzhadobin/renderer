@@ -1,21 +1,17 @@
 package hse;
 
-import java.io.Console;
-import java.io.IOException;
 import java.nio.file.Paths;
 
-import hse.matrixes.Matrix;
-import hse.matrixes.OrthogonalProjection;
-import hse.matrixes.PerspectiveProjection;
-import hse.matrixes.conversations.RotationX;
-import hse.matrixes.conversations.RotationY;
+import hse.controllers.ChangeController;
+import hse.controllers.EventMaster;
+import hse.controllers.Master;
+import hse.controllers.change.Change;
+import hse.controllers.change.ChangeType;
 import hse.objects.Camera;
 import hse.objects.Object3D;
-import hse.objects.Point3D;
+import hse.ui.CameraForm;
 import hse.ui.MainForm;
-import hse.ui.SettingsForm;
 
-import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -23,25 +19,37 @@ import java.awt.*;
  */
 public class Main {
     static MainForm form;
+    static ChangeController controller;
+
 
     public static void main(String[] args) throws InterruptedException {
 
-
-        Camera camera = new Camera();
-        camera.lookat();
 //        Object3D fromFile = Object3D.createFromFile(Paths.get("./models/head.obj"));
+
         EventQueue.invokeLater(() -> {
-            form = new MainForm();
+            form = new MainForm(false);
+            controller = ChangeController.createController(false, form);
+            form.initPicturePanel(controller);
+
             form.setVisible(true);
         });
 
-        Thread.currentThread().sleep(1000);
+        Thread.currentThread().sleep(4000);
         Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/head.obj")));
-//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
-//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
-//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
-//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
-        Master master = new Master(form);
+        Stage.getInstance().getObject(0).id = "head";
 
+        controller.start();
+
+        controller.performChange(new Change(
+                "",
+                ChangeType.INIT
+        ));
+        //        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
+//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
+//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
+//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
+//        Master master = new Master(form);
+
+        new CameraForm().setVisible(true);
     }
 }

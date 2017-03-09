@@ -1,6 +1,7 @@
 package hse.objects;
 
 import com.sun.org.apache.regexp.internal.RESyntaxException;
+import hse.controllers.change.Direction;
 
 import java.util.DoubleSummaryStatistics;
 import static java.lang.Math.*;
@@ -15,10 +16,24 @@ public class Normal extends Point3D<Double> {
         z = 0.0;
     }
 
+    public void setValue(Direction direction, double value) {
+        switch (direction) {
+            case X:
+                x = value;
+                break;
+
+            case Y:
+                y = value;
+                break;
+            case Z:
+                z = value;
+                break;}
+    }
+
+
     public Normal(Point3D<Double> point3D) {
         super(point3D.getX(), point3D.getY(), point3D.getZ());
     }
-
 
     public Normal(Double x, Double y, Double z) {
         super(x, y, z);

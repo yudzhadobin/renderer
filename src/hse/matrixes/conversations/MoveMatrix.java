@@ -6,7 +6,7 @@ import hse.matrixes.Matrix;
  * Created by ZhadobinYD on 25.01.2017.
  */
 public class MoveMatrix extends Matrix {
-    public MoveMatrix(int x, int y, int z) {
+    public MoveMatrix(double x, double y, double z) {
         super(4, 4);
 
         set(0,0, 1);

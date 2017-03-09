@@ -3,6 +3,10 @@ package hse.ui;
 import com.sun.scenario.Settings;
 import hse.DrawingMode;
 import hse.Setings;
+import hse.controllers.ChangeController;
+import hse.controllers.change.Change;
+import hse.controllers.change.ChangeType;
+import hse.controllers.change.Direction;
 import hse.matrixes.Projections;
 import hse.objects.Object3D;
 
@@ -17,6 +21,8 @@ import java.awt.*;
 public class SettingsForm extends JFrame {
     Object3D object3D;
 
+    ChangeController controller;
+
     JSlider angleX = new JSlider();
     JSlider angleY = new JSlider();
     JSlider angleZ = new JSlider();
@@ -30,8 +36,9 @@ public class SettingsForm extends JFrame {
     JCheckBox light = new JCheckBox();
 
 
-    public SettingsForm(Object3D object3D) {
+    public SettingsForm(Object3D object3D, ChangeController changeController) {
         this.object3D = object3D;
+        this.controller = changeController;
 
         initSliders();
         initScale();
@@ -47,6 +54,10 @@ public class SettingsForm extends JFrame {
             } else {
                 Setings.projection = Projections.ORTHOGONAL;
             }
+            controller.performChange(new Change(
+                    object3D.id,
+                    ChangeType.PROJECTION_CHANGE
+            ));
         });
 
         drawMode.addItem("Контур");
@@ -63,19 +74,22 @@ public class SettingsForm extends JFrame {
             if(e.getItem().equals("Текстуры")) {
                 Setings.drawingMode = DrawingMode.TEXTURED;
             }
+
+            controller.performChange(new Change(
+                    object3D.id,
+                    ChangeType.TEXTURE_CHANGE
+            ));
         });
 
-        projection.addItemListener(e -> {
-            if(e.getItem().equals("Перспективная")) {
-                Setings.projection = Projections.PERSPECTIVE;
-            } else {
-                Setings.projection = Projections.ORTHOGONAL;
-            }
-        });
 
         light.addChangeListener(
                 e -> {
                     Setings.light_on = !light.isSelected();
+
+                    controller.performChange(new Change(
+                            object3D.id,
+                            ChangeType.LIGHT_CHANGE
+                    ));
                 }
         );
 
@@ -94,11 +108,15 @@ public class SettingsForm extends JFrame {
     }
 
     private void initScale() {
-        SpinnerModel sm = new SpinnerNumberModel(100, 0, 500, 10); //default value,lower bound,upper bound,increment by
+        SpinnerModel sm = new SpinnerNumberModel(1, 0, 500, 1); //default value,lower bound,upper bound,increment by
         scale.setModel(sm);
         scale.addChangeListener(
                 e -> {
-                    object3D.setScale((Integer) scale.getValue());
+                    controller.performChange(new Change(
+                            object3D.id,
+                            ChangeType.SCALE_CHANGE,
+                            (Number) scale.getValue()
+                    ));
                 }
         );
 //        SpinnerModel moveModel1 = new SpinnerNumberModel(0, -100, 100, 1);
@@ -107,13 +125,28 @@ public class SettingsForm extends JFrame {
         moveZ.setModel(new SpinnerNumberModel(0, -400, 400, 1));
 
         moveX.addChangeListener(e -> {
-            object3D.setXMove((int)moveX.getValue());
+            controller.performChange(new Change(
+                    object3D.id,
+                    ChangeType.MODEL_MOVE,
+                    Direction.X,
+                    (Double) moveX.getValue()
+            ));
         });
         moveY.addChangeListener(e -> {
-            object3D.setYMove((int)moveY.getValue());
+            controller.performChange(new Change(
+                    object3D.id,
+                    ChangeType.MODEL_MOVE,
+                    Direction.Y,
+                    (Double) moveY.getValue()
+            ));
         });
         moveZ.addChangeListener(e -> {
-            object3D.setZMove((int)moveZ.getValue());
+            controller.performChange(new Change(
+                    object3D.id,
+                    ChangeType.MODEL_MOVE,
+                    Direction.Z,
+                    (Double) moveZ.getValue()
+            ));
         });
     }
 
@@ -122,9 +155,26 @@ public class SettingsForm extends JFrame {
         initSlider(angleY);
         initSlider(angleZ);
 
-        angleX.addChangeListener(e -> object3D.setXRotation(angleX.getValue()));
-        angleY.addChangeListener(e -> object3D.setYRotation(angleY.getValue()));
-        angleZ.addChangeListener(e -> object3D.setZRotation(angleZ.getValue()));
+        angleX.addChangeListener(e -> controller.performChange(new Change(
+                object3D.id,
+                ChangeType.ROTATION,
+                Direction.X,
+                angleX.getValue()
+        )));
+
+        angleY.addChangeListener(e -> controller.performChange(new Change(
+                object3D.id,
+                ChangeType.ROTATION,
+                Direction.Y,
+                angleY.getValue()
+        )));
+
+        angleZ.addChangeListener(e -> controller.performChange(new Change(
+                object3D.id,
+                ChangeType.ROTATION,
+                Direction.Z,
+                angleZ.getValue()
+        )));
 
 
     }

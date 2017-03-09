@@ -1,6 +1,7 @@
 package hse.objects;
 
 import hse.UvCoordinate;
+import hse.controllers.change.Direction;
 import hse.matrixes.Matrix;
 
 import java.awt.*;
@@ -43,6 +44,7 @@ public class Point3D<T extends Number> {
         z = another.z;
         another.z = sup;
     }
+
 
     public T getX() {
         return x;

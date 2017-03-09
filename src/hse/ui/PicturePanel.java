@@ -3,6 +3,7 @@ package hse.ui;
 import hse.Setings;
 
 import hse.Stage;
+import hse.controllers.ChangeController;
 import hse.objects.Object3D;
 import hse.objects.Point3D;
 
@@ -21,12 +22,12 @@ import java.util.List;
 public class PicturePanel extends JPanel {
     SwapChain swapChain;
 
+    ChangeController controller;
 
-
-    public PicturePanel() {
+    public PicturePanel(ChangeController controller) {
         super();
         this.swapChain = SwapChain.getInstance();
-
+        this.controller = controller;
 //        BufferedImage bufferedImage = new BufferedImage(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
         this.setDoubleBuffered(false);
         this.setSize(new Dimension(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT));
@@ -44,7 +45,7 @@ public class PicturePanel extends JPanel {
                 for (Object3D drawedObject : Stage.getInstance().getDisplayedObjects()) {
                     if(drawedObject.getBox().isIn(point3D)) {
                         EventQueue.invokeLater(() -> {
-                            SettingsForm form = new SettingsForm(drawedObject);
+                            SettingsForm form = new SettingsForm(drawedObject, controller);
                             form.setVisible(true);
                         });
                     }
@@ -73,6 +74,7 @@ public class PicturePanel extends JPanel {
         }
         super.repaint();
         isMyUpdate = false;
+
     }
     long lastUpdate = 0;
 
@@ -83,7 +85,7 @@ public class PicturePanel extends JPanel {
 
         g.drawImage(swapChain.getVisible(), 0, 0, this);
 
-        System.out.println(time - lastUpdate);
+//        System.out.println(time - lastUpdate);
         lastUpdate = time;
     }
 }
