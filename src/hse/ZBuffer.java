@@ -22,25 +22,25 @@ public class ZBuffer  {
         return buffer;
     }
 
-    List<List<Integer>> matrix;
+    List<List<Double>> matrix;
 
     private ZBuffer() {
         matrix = new ArrayList<>();
         for (int i = 0; i < Setings.WINDOW_WIDTH; i++) {
             matrix.add(new ArrayList<>());
             for (int j = 0; j < Setings.WINDOW_HEIGHT; j++) {
-                matrix.get(i).add(Integer.MIN_VALUE);
+                matrix.get(i).add(Double.MIN_VALUE);
             }
         }
     }
 
 
 
-    public void set(int i, int j, int value) {
+    public void set(int i, int j, double value) {
         matrix.get(i).set(j, value);
     }
 
-    public int get(int i, int j) {
+    public double get(int i, int j) {
        return matrix.get(i).get(j);
     }
 

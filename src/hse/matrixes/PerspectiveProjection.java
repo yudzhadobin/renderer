@@ -1,5 +1,7 @@
 package hse.matrixes;
 
+import hse.objects.Camera;
+import hse.objects.Normal;
 import hse.objects.Point3D;
 
 import java.util.List;
@@ -19,6 +21,10 @@ public class PerspectiveProjection extends Matrix {
         set(3, 2, -0.5);
 
         //// TODO: 04.01.2017  may be need to rewrite multiple and divide
+    }
+
+    public void update(Camera camera) {
+//        set(3, 2, -1.f /(new Normal(camera.eye))));
     }
 
     public Point3D<Double> multiple(Point3D<Double> point) {

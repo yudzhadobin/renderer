@@ -28,7 +28,7 @@ public class Main {
 
         EventQueue.invokeLater(() -> {
             form = new MainForm(false);
-            controller = ChangeController.createController(false, form);
+            controller = ChangeController.createController(true, form);
             form.initPicturePanel(controller);
 
             form.setVisible(true);
