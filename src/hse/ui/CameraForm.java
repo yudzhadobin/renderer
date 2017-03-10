@@ -1,5 +1,9 @@
 package hse.ui;
 
+import hse.controllers.ChangeController;
+import hse.controllers.change.Change;
+import hse.controllers.change.ChangeType;
+import hse.controllers.change.Direction;
 import hse.objects.Camera;
 
 import javax.swing.*;
@@ -9,6 +13,9 @@ import java.awt.*;
  * Created by yuriy on 27.02.17.
  */
 public class CameraForm extends JFrame {
+
+    ChangeController controller;
+
 
     Camera camera = Camera.getInstance();
 
@@ -21,7 +28,9 @@ public class CameraForm extends JFrame {
     JSpinner centerZ = new JSpinner();
 
 
-    public CameraForm() {
+    public CameraForm(ChangeController controller) {
+        this.controller = controller;
+
         initSpinner();
 
         Container contentPane = this.getContentPane();
@@ -39,33 +48,33 @@ public class CameraForm extends JFrame {
 
     private void initSpinner() {
 //        SpinnerModel moveModel1 = new SpinnerNumberModel(0, -100, 100, 1);
-        eyeX.setModel(new SpinnerNumberModel(0, -400, 400, 1));
-        eyeY.setModel(new SpinnerNumberModel(0, -400, 400, 1));
-        eyeZ.setModel(new SpinnerNumberModel(0, -400, 400, 1));
+        eyeX.setModel(new SpinnerNumberModel(camera.getEye(Direction.X), -800, 800, 0.1));
+        eyeY.setModel(new SpinnerNumberModel(camera.getEye(Direction.Y), -800, 800, 0.1));
+        eyeZ.setModel(new SpinnerNumberModel(camera.getEye(Direction.Z), -800, 800, 0.1));
 
-        centerX.setModel(new SpinnerNumberModel(0, -400, 400, 0.01));
-        centerY.setModel(new SpinnerNumberModel(0, -400, 400, 0.01));
-        centerZ.setModel(new SpinnerNumberModel(0, -400, 400, 0.01));
+        centerX.setModel(new SpinnerNumberModel(camera.getC(Direction.X), -800, 800, 0.1));
+        centerY.setModel(new SpinnerNumberModel(camera.getC(Direction.Y), -800, 800, 0.1));
+        centerZ.setModel(new SpinnerNumberModel(camera.getC(Direction.Z), -800, 800, 0.1));
 
 
         eyeX.addChangeListener(e -> {
-            camera.setEyeX((int)eyeX.getValue());
+            controller.performChange(new Change(ChangeType.CAMERA_EYE_MOVE, Direction.X, (Number) eyeX.getValue()));
         });
         eyeY.addChangeListener(e -> {
-            camera.setEyeY((int)eyeY.getValue());
+            controller.performChange(new Change(ChangeType.CAMERA_EYE_MOVE, Direction.Y, (Number) eyeY.getValue()));
         });
         eyeZ.addChangeListener(e -> {
-            camera.setEyeZ((int)eyeZ.getValue());
+            controller.performChange(new Change(ChangeType.CAMERA_EYE_MOVE, Direction.Z, (Number) eyeZ.getValue()));
         });
 
         centerX.addChangeListener(e -> {
-            camera.setCenterX((int)eyeX.getValue());
+            controller.performChange(new Change(ChangeType.CAMERA_CENTER_MOVE, Direction.X, (Number) centerX.getValue()));
         });
         centerY.addChangeListener(e -> {
-            camera.setCenterY((int)eyeY.getValue());
+            controller.performChange(new Change(ChangeType.CAMERA_CENTER_MOVE, Direction.Y, (Number) centerY.getValue()));
         });
         centerZ.addChangeListener(e -> {
-            camera.setCenterZ((int)eyeZ.getValue());
+            controller.performChange(new Change(ChangeType.CAMERA_CENTER_MOVE, Direction.Z, (Number) centerZ.getValue()));
         });
     }
 }

@@ -19,13 +19,13 @@ public class Camera {
     }
 
 
-    Normal eye = new Normal(400d,-0d, -20d).normalize();
+    Normal eye = new Normal(0d,-0d, -0d).normalize();
     Normal c = new Normal(1d, 1d, 1d).normalize();
 
     boolean wasChangeLookAt = false;
     boolean wasChangeViewPort = false;
 
-    Normal up = new Normal(-0d,-1d, 0d).normalize();
+    Normal up = new Normal(0d,-1d, 0d).normalize();
 
     Matrix lookat;
     Matrix viewport;
@@ -82,44 +82,28 @@ public class Camera {
     }
 
 
-    public void setEye(Direction direction, double value) {
+    public void setEye(Direction direction, Double value) {
         eye.setValue(direction, value);
-    }
-
-    public void setEyeX(double x) {
+        eye.normalize();
+        System.out.println("eye: " + eye);
         wasChangeLookAt = true;
         wasChangeViewPort = true;
-        eye.setX(x);
     }
 
-    public void setEyeY(double y) {
-        wasChangeLookAt = true;
-        wasChangeViewPort = true;
-        eye.setY(y);
+    public double getEye(Direction direction) {
+        return eye.getValue(direction);
     }
 
-    public void setEyeZ(double z) {
+    public void setC(Direction direction, Double value) {
+        c.setValue(direction, value);
+        c.normalize();
+        System.out.println("c: " + eye);
         wasChangeLookAt = true;
         wasChangeViewPort = true;
-        eye.setZ(z);
     }
 
-    public void setCenterX(double x) {
-        wasChangeLookAt = true;
-        wasChangeViewPort = true;
-        c.setX(x);
-    }
-
-    public void setCenterY(double y) {
-        wasChangeLookAt = true;
-        wasChangeViewPort = true;
-        c.setY(y);
-    }
-
-    public void setCenterZ(double z) {
-        wasChangeLookAt = true;
-        wasChangeViewPort = true;
-        c.setZ(z);
+    public double getC(Direction direction) {
+        return c.getValue(direction);
     }
 
 }

@@ -5,6 +5,7 @@ package hse.controllers.change;
  */
 public enum ChangeType {
     CAMERA_EYE_MOVE,
+    CAMERA_CENTER_MOVE,
     MODEL_MOVE,
     SCALE_CHANGE,
     ROTATION,

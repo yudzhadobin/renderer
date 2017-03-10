@@ -50,6 +50,6 @@ public class Main {
 //        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
 //        Master master = new Master(form);
 
-        new CameraForm().setVisible(true);
+        new CameraForm(controller).setVisible(true);
     }
 }

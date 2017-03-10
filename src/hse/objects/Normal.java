@@ -16,7 +16,7 @@ public class Normal extends Point3D<Double> {
         z = 0.0;
     }
 
-    public void setValue(Direction direction, double value) {
+    public void setValue(Direction direction, Double value) {
         switch (direction) {
             case X:
                 x = value;
@@ -71,6 +71,9 @@ public class Normal extends Point3D<Double> {
 
     public Normal normalize() {
         double length = sqrt(pow(x, 2) + pow(y, 2) + pow(z,2));
+        if(length == 0) {
+            return this;
+        }
         this.x /= length;
         this.y /= length;
         this.z /= length;
@@ -90,5 +93,19 @@ public class Normal extends Point3D<Double> {
     @Override
     public String toString() {
         return "x = " + x + ", y = " + y + ", z = " + z;
+    }
+
+    public double getValue(Direction direction) {
+        switch (direction) {
+            case X:
+                return x;
+
+            case Y:
+                return y;
+
+            case Z:
+                return z;
+        }
+        return 0;
     }
 }

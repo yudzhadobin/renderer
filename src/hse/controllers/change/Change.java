@@ -30,6 +30,13 @@ public class Change {
         this.value = value;
     }
 
+
+    public Change(ChangeType change, Direction direction, Number value) {
+        this.change = change;
+        this.direction = direction;
+        this.value = value;
+    }
+
     public String getObjectID() {
         return objectID;
     }

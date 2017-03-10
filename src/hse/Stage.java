@@ -40,6 +40,10 @@ public class Stage {
 
 
     public Object3D getObject(String id) {
+        if(id == null) {
+            return null;
+        }
+
         for (Object3D displayedObject : displayedObjects) {
 
             if (displayedObject.id.equals(id)) {

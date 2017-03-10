@@ -37,7 +37,10 @@ public class ChangeController {
             Object3D obj = stage.getObject(change.getObjectID());
             switch (change.getChange()) {
                 case CAMERA_EYE_MOVE:
-                    Camera.getInstance().setEye(change.getDirection(), (Integer) change.getValue());
+                    Camera.getInstance().setEye(change.getDirection(), (Double) change.getValue());
+                    break;
+                case CAMERA_CENTER_MOVE:
+                    Camera.getInstance().setC(change.getDirection(), (Double) change.getValue());
                     break;
                 case MODEL_MOVE:
                     obj.setMove(change.getDirection(), (Integer) change.getValue());
