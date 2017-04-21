@@ -112,6 +112,7 @@ public class SettingsForm extends JFrame {
         scale.setModel(sm);
         scale.addChangeListener(
                 e -> {
+
                     controller.performChange(new Change(
                             object3D.id,
                             ChangeType.SCALE_CHANGE,

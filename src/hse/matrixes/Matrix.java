@@ -67,11 +67,6 @@ public class Matrix {
     }
 
 
-    public void multipleInPlace(Point3D<Double> point) {
-        Point3D<Double> result = multiple(point);
-
-        point.swap(result);
-    }
 
     public Matrix multiple(Matrix matrix) {
         Matrix result = new Matrix(4, 4);
@@ -112,7 +107,7 @@ public class Matrix {
 
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < width; j++) {
-                builder.append(get(i,j) + " ");
+                builder.append(get(i,j) + "\t");
             }
             builder.append("\n");
         }

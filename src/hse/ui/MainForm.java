@@ -19,7 +19,7 @@ public class MainForm extends JFrame {
         super();
 
         this.setSize(new Dimension(Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT));
-
+        this.setIgnoreRepaint(true);
         this.setResizable(false);
 
     }

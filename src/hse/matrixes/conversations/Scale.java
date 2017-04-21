@@ -18,7 +18,7 @@ public class Scale extends Matrix {
         set(3, 3, 10); //увеличить в 10000 раз, может надо переписать
     }
 
-    public Scale(int size) {
+    public Scale(double size) {
         super(4, 4);
 
         set(0, 0, size);

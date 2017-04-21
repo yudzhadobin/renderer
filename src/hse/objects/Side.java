@@ -21,13 +21,6 @@ import java.util.List;
 public class Side {
     List<PointInfo> pointsInfo;
 
-    static double diffuseReflectionCoef = .50;
-    static double lightIntensity = 1;
-    static int light_x = 50;
-    static int light_y = 50;
-    static int light_z = 500;
-
-
     public Side() {
 
     }
@@ -35,37 +28,6 @@ public class Side {
     public Side(List<PointInfo> infos) {
         this.pointsInfo = infos;
     }
-    /*
-        public static List<Side> create(List<Integer> indexes) {
-
-            List<Side> result = new ArrayList<>();
-            Side side = new Side();
-            if (indexes.size() > 3) {
-
-
-                side.indexes.add(indexes.get(0));
-                side.indexes.add(indexes.get(1));
-                side.indexes.add(indexes.get(2));
-
-                result.add(side);
-
-                side = new Side();
-
-                side.indexes.add(indexes.get(0));
-                side.indexes.add(indexes.get(2));
-                side.indexes.add(indexes.get(3));
-            } else {
-                side.indexes.addAll(indexes);
-            }
-
-
-
-            result.add(side);
-
-            return result;
-        }
-
-    */
 
     @SuppressWarnings("unchecked")
     public void drawContour(SwapChain swapChain, MoveMatrix move, Matrix projection, Object3D object) {
@@ -74,9 +36,6 @@ public class Side {
         Point3D a = pointsInfo.get(0).point;
         Point3D b = pointsInfo.get(1).point;
         Point3D c = pointsInfo.get(2).point;
-
-        Matrix lookat = Camera.getInstance().lookat();
-        Matrix viewPort = Camera.getInstance().viewport(300,300);
 
 
         Point3D<Double> convertedA = a;
@@ -168,7 +127,6 @@ public class Side {
                     continue;
                 }
                 if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
-
                     ZBuffer.getBuffer().set(point.x, point.y, savedZ);
                     drawingPanel.setRGB(point.x, point.y, color.getRGB());
                     object.box.extend(point);
@@ -178,7 +136,6 @@ public class Side {
 
             }
         }
-
 
     }
 
@@ -391,20 +348,20 @@ public class Side {
             B.y += round(secondHalf ? (c.y - b.y) * beta : (b.y - a.y) * beta);
             B.z += round(secondHalf ? (c.z - b.z) * beta : (b.z - a.z) * beta);
 
-            UvCoordinate uvPointB = new UvCoordinate(
-                    (int) (secondHalf ? bUv.getX() + (cUv.getX() - bUv.getX()) * beta
-                            : aUv.getX() + (bUv.getX() - aUv.getX()) * beta),
-                    (int) (secondHalf ? bUv.getY() + (cUv.getY() - bUv.getY()) * beta
-                            : aUv.getY() + (bUv.getY() - aUv.getY()) * beta),
-                    0
-            );
+//            UvCoordinate uvPointB = new UvCoordinate(
+//                    (int) (secondHalf ? bUv.getX() + (cUv.getX() - bUv.getX()) * beta
+//                            : aUv.getX() + (bUv.getX() - aUv.getX()) * beta),
+//                    (int) (secondHalf ? bUv.getY() + (cUv.getY() - bUv.getY()) * beta
+//                            : aUv.getY() + (bUv.getY() - aUv.getY()) * beta),
+//                    0
+//            );
 
             double intensityB = secondHalf ? bIntensity + (cIntensity - bIntensity) * beta
                     : aIntensity + (bIntensity - aIntensity) * beta;
 
             if (A.x > B.x) {
                 A.swap(B);
-                uvPointA.swap(uvPointB);
+//                uvPointA.swap(uvPointB);
 
                 double sup = intensityB;
                 intensityB = intensityA;
@@ -423,19 +380,15 @@ public class Side {
                 point.y += round((B.y - A.y) * phi);
                 point.z += round((B.z - A.z) * phi);
 
-                UvCoordinate uvPoint = new UvCoordinate(
-                        (int) (uvPointA.getX() + (uvPointB.getX() - uvPointA.getX()) * phi),
-                        (int) (uvPointA.getY() + (uvPointB.getY() - uvPointA.getY()) * phi),
-                        0
-                );
+//                UvCoordinate uvPoint = new UvCoordinate(
+//                        (int) (uvPointA.getX() + (uvPointB.getX() - uvPointA.getX()) * phi),
+//                        (int) (uvPointA.getY() + (uvPointB.getY() - uvPointA.getY()) * phi),
+//                        0
+//                );
 
                 double pointIntensity = intensityA + (intensityB - intensityA) * phi;
                 int savedZ = point.z;
                 point = projection.multipleInteger(point);
-
-                point.x += 600 + move.getX();
-                point.y = 500 - point.y + move.getY();
-                savedZ += move.getZ();
 
                 if(!checkPointIsIn(point)) {
                     continue;
@@ -443,8 +396,12 @@ public class Side {
 
                 if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
                     ZBuffer.getBuffer().set(point.x, point.y, savedZ);
-                    drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
-                            .getRGB(uvPoint.getX(), uvPoint.getY())));
+                    Color color = new Color((int) (255 * pointIntensity), (int) (255 * pointIntensity),
+                            (int) (255 * pointIntensity));
+                    drawingPanel.setRGB(point.x, point.y, color.getRGB());
+
+//                    drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
+//                            .getRGB(uvPoint.getX(), uvPoint.getY())));
                     object.box.extend(point);
 
 
@@ -570,8 +527,9 @@ public class Side {
 
                 if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
                     ZBuffer.getBuffer().set(point.x, point.y, savedZ);
-                    drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
-                            .getRGB(uvPoint.getX(), uvPoint.getY())));
+                    Color color = new Color((int) (255 * pointIntensity), (int) (255 * pointIntensity),
+                            (int) (255 * pointIntensity));
+                    drawingPanel.setRGB(point.x, point.y, color.getRGB());
                     object.box.extend(point);
 
                 }

@@ -15,7 +15,7 @@ public class Stage {
         return instance;
     }
 
-    static public double diffuseReflectionCoef = .50;
+    static public double diffuseReflectionCoef = .70;
     static public double lightIntensity = 1;
     static public int light_x = 50;
     static public int light_y = 50;

@@ -1,7 +1,9 @@
 package hse.controllers;
 
+import hse.Setings;
 import hse.Stage;
 import hse.controllers.change.Change;
+import hse.matrixes.PerspectiveProjection;
 import hse.objects.Camera;
 import hse.objects.Object3D;
 import hse.ui.MainForm;
@@ -38,6 +40,10 @@ public class ChangeController {
             switch (change.getChange()) {
                 case CAMERA_EYE_MOVE:
                     Camera.getInstance().setEye(change.getDirection(), (Double) change.getValue());
+                    if (Setings.projection instanceof PerspectiveProjection) {
+                        ((PerspectiveProjection)Setings.projection).update();
+                    }
+
                     break;
                 case CAMERA_CENTER_MOVE:
                     Camera.getInstance().setC(change.getDirection(), (Double) change.getValue());
@@ -49,7 +55,7 @@ public class ChangeController {
                     obj.setRotation(change.getDirection(), ((int) change.getValue()));
                     break;
                 case SCALE_CHANGE:
-                    obj.setScale((Integer) change.getValue());
+                    obj.setScale( (Double) change.getValue());
                     break;
             }
         }

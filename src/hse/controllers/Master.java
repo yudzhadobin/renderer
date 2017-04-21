@@ -153,7 +153,7 @@ public class Master implements Updater{
                 conversations.set(2,3, currentObject.getZMove());
 
 //                System.out.println(co/nversations);
-                nextTasks.add(new Task(conversations, move, stage.getObject(j), FillType.ORDINAL, isLightOn, mode));
+                nextTasks.add(new Task(conversations, move, stage.getObject(j), Setings.fillType, isLightOn, mode));
             }
         }
 

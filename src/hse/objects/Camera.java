@@ -3,7 +3,8 @@ package hse.objects;
 import hse.Setings;
 import hse.controllers.change.Direction;
 import hse.matrixes.Matrix;
-
+import org.omg.PortableInterceptor.INACTIVE;
+import sun.jvm.hotspot.utilities.IntArray;
 
 /**
  * Created by yuriy on 18.02.17.
@@ -26,7 +27,6 @@ public class Camera {
 
     boolean wasChangeLookAt = false;
     boolean wasChangeViewPort = false;
-
 
     Matrix lookat;
     Matrix viewport;
@@ -60,17 +60,17 @@ public class Camera {
         return lookat;
     }
 
-    public Matrix viewport(int x, int y) {
+    public Matrix viewport(int x, int y, int w, int h) {
         if(viewport == null || wasChangeViewPort) {
             Matrix matrix = Matrix.getIdenity();
 
 
-            matrix.set(0, 3, x + Setings.WINDOW_WIDTH / 16.f);
-            matrix.set(1, 3, y + Setings.WINDOW_HEIGHT / 16.f);
+            matrix.set(0, 3, x + w / 2.f);
+            matrix.set(1, 3, y + h / 2.f);
             matrix.set(2, 3, depth/2.f);
 
-            matrix.set(0, 0, Setings.WINDOW_WIDTH / 16.f);
-            matrix.set(1, 1, Setings.WINDOW_HEIGHT / 16.f);
+            matrix.set(0, 0, w / 2.f);
+            matrix.set(1, 1, h / 2.f);
             matrix.set(2, 2, depth/2.f);
 
             viewport = matrix;
@@ -82,8 +82,7 @@ public class Camera {
 
     public void setEye(Direction direction, Double value) {
         eye.setValue(direction, value);
-        eye.normalize();
-        System.out.println("eye: " + eye);
+
         wasChangeLookAt = true;
         wasChangeViewPort = true;
     }
@@ -94,8 +93,6 @@ public class Camera {
 
     public void setC(Direction direction, Double value) {
         c.setValue(direction, value);
-        c.normalize();
-        System.out.println("c: " + eye);
         wasChangeLookAt = true;
         wasChangeViewPort = true;
     }

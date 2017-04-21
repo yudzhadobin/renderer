@@ -12,6 +12,8 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +85,15 @@ public class PicturePanel extends JPanel {
         super.paintComponents(g);
         long time = System.currentTimeMillis();
 
-        g.drawImage(swapChain.getVisible(), 0, 0, this);
+
+
+        AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
+        tx.translate(0, -swapChain.getVisible().getHeight(null));
+        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        BufferedImage filter = op.filter(swapChain.getVisible(), null);
+
+
+        g.drawImage(filter, 0, 0, this);
 
 //        System.out.println(time - lastUpdate);
         lastUpdate = time;

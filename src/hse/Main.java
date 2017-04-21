@@ -7,6 +7,8 @@ import hse.controllers.EventMaster;
 import hse.controllers.Master;
 import hse.controllers.change.Change;
 import hse.controllers.change.ChangeType;
+import hse.controllers.change.Direction;
+import hse.matrixes.Projections;
 import hse.objects.Camera;
 import hse.objects.Object3D;
 import hse.ui.CameraForm;
@@ -24,17 +26,16 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException {
 
-//        Object3D fromFile = Object3D.createFromFile(Paths.get("./models/head.obj"));
 
         EventQueue.invokeLater(() -> {
             form = new MainForm(false);
-            controller = ChangeController.createController(true, form);
+            controller = ChangeController.createController(false, form);
             form.initPicturePanel(controller);
 
             form.setVisible(true);
         });
 
-        Thread.currentThread().sleep(4000);
+        Thread.currentThread().sleep(1000);
         Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/head.obj")));
         Stage.getInstance().getObject(0).id = "head";
 
@@ -44,6 +45,12 @@ public class Main {
                 "",
                 ChangeType.INIT
         ));
+
+        controller.performChange(new Change(
+                "head",
+                ChangeType.SCALE_CHANGE,
+                0.3
+        ));
         //        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
 //        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
 //        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
@@ -51,5 +58,6 @@ public class Main {
 //        Master master = new Master(form);
 
         new CameraForm(controller).setVisible(true);
+
     }
 }

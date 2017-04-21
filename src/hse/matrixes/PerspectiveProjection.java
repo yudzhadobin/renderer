@@ -11,20 +11,25 @@ import java.util.List;
  */
 public class PerspectiveProjection extends Matrix {
 
+    Camera camera = Camera.getInstance();
+
+
     public PerspectiveProjection() {
         super(4, 4);
 
         set(0, 0, 1);
         set(1, 1, 1);
+        set(2,2,1);
         set(3, 3, 1);
 
-        set(3, 2, -0.5);
-
+        update();
         //// TODO: 04.01.2017  may be need to rewrite multiple and divide
     }
 
-    public void update(Camera camera) {
-//        set(3, 2, -1.f /(new Normal(camera.eye))));
+    public void update() {
+        set(2, 3, -1.f /(new Normal(camera.eye).minus(camera.c)).norm());
+
+        System.out.println(get(3,2));
     }
 
     public Point3D<Double> multiple(Point3D<Double> point) {
@@ -40,12 +45,12 @@ public class PerspectiveProjection extends Matrix {
         result.setZ((point.getX() * sub.get(0) + point.getY() * sub.get(1) + point.getZ() * sub.get(2) + 1 * sub.get(3)));
 
 
-        List<Double> doubles = matrix.get(3);
         Double sum = 0.0;
-        for (Double aDouble : doubles) {
-            sum += aDouble;
-        }
 
+        for (int i = 0; i < 4; i++) {
+            List<Double> doubles = matrix.get(i);
+            sum += doubles.get(3);
+        }
         result.setX(result.getX() / sum);
         result.setY(result.getY() / sum);
         result.setZ(result.getZ() / sum);

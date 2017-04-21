@@ -1,5 +1,6 @@
 package hse;
 
+import hse.light.FillType;
 import hse.matrixes.Matrix;
 import hse.matrixes.Projections;
 
@@ -15,8 +16,9 @@ public class Setings {
     public static int WINDOW_HEIGHT = 800;
     public static int WINDOW_WIDTH = 800;
 
-    public static boolean light_on = true;
+    public static boolean light_on = false;
 
-    public static Matrix projection = Projections.ORTHOGONAL;
-    public static DrawingMode drawingMode = DrawingMode.CONTOUR;
+    public static Matrix projection = Projections.PERSPECTIVE;
+    public static DrawingMode drawingMode = DrawingMode.MODEL;
+    public static FillType fillType = FillType.GURO;
 }

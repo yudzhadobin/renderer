@@ -69,6 +69,12 @@ public class Normal extends Point3D<Double> {
         return result;
     }
 
+    public double norm() {
+        return sqrt(pow(x, 2) + pow(y, 2) + pow(z,2));
+
+    }
+
+
     public Normal normalize() {
         double length = sqrt(pow(x, 2) + pow(y, 2) + pow(z,2));
         if(length == 0) {
@@ -84,7 +90,7 @@ public class Normal extends Point3D<Double> {
         Normal result = new Normal();
 
         result.setX(this.getY() * another.getZ() - this.getZ() * another.getY());
-        result.setY(this.getX() * another.getZ() - this.getZ() * another.getX());
+        result.setY(this.getZ() * another.getX() - this.getX() * another.getZ());
         result.setZ(this.getX() * another.getY() - this.getY() * another.getX());
 
         return result;

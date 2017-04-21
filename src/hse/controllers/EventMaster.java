@@ -1,5 +1,6 @@
 package hse.controllers;
 
+import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion;
 import hse.*;
 import hse.light.FillType;
 import hse.matrixes.Matrix;
@@ -81,7 +82,7 @@ public class EventMaster implements Updater{
                 conversations.set(2,3, currentObject.getZMove());
 
 //                System.out.println(co/nversations);
-                taskSet.addTask(new Task(conversations, move, stage.getObject(j), FillType.ORDINAL, isLightOn, mode));
+                taskSet.addTask(new Task(conversations, move, stage.getObject(j), Setings.fillType, isLightOn, mode));
             }
         }
 

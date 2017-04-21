@@ -50,11 +50,11 @@ public class Object3D {
     };
 
     
-    Point3D position;
     BufferedImage texture;
 
     BoundingBox box = new BoundingBox();
-    private int scale = 1;
+
+    private double scale = 1;
 
     public void setTexture(BufferedImage texture) {
         this.texture = texture;
@@ -239,11 +239,11 @@ public class Object3D {
         return move.get(2);
     }
 
-    public void setScale(int scale) {
+    public void setScale(double scale) {
         this.scale = scale;
     }
 
-    public int getScale() {
+    public double getScale() {
         return scale;
     }
 }
