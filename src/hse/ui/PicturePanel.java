@@ -1,22 +1,18 @@
 package hse.ui;
 
 import hse.Setings;
-
 import hse.Stage;
 import hse.controllers.ChangeController;
 import hse.objects.Object3D;
-import hse.objects.Point3D;
+import hse.objects.Point3DInteger;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Yura on 25.12.2016.
@@ -39,13 +35,13 @@ public class PicturePanel extends JPanel {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Point3D<Integer> point3D = new Point3D<Integer>(
+                Point3DInteger point3DDouble = new Point3DInteger(
                         e.getX(),
                         e.getY(),
                         0
                 );
                 for (Object3D drawedObject : Stage.getInstance().getDisplayedObjects()) {
-                    if(drawedObject.getBox().isIn(point3D)) {
+                    if(drawedObject.getBox().isIn(point3DDouble)) {
                         EventQueue.invokeLater(() -> {
                             SettingsForm form = new SettingsForm(drawedObject, controller);
                             form.setVisible(true);

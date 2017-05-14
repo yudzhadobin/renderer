@@ -9,21 +9,22 @@ import java.awt.image.BufferedImage;
  * Created by Yura on 22.01.2017.
  */
 public class BoundingBox {
-    Point3D<Integer> a;
-    Point3D<Integer> b;
+    Point3DInteger a;
+    Point3DInteger b;
 
     public BoundingBox() {
-        this.a = new Point3D<>();
-        this.b = new Point3D<>();
+        this.a = new Point3DInteger();
+        this.b = new Point3DInteger();
     }
 
-    public  boolean isIn(Point3D<Integer> another) {
-        return another.x >= a.x && another.y >= a.y &&
-                another.x <= b.x && another.y <= b.y;
+    public  boolean isIn(Point3DInteger another) {
+return true;
+        //        return another.x >= a.x && another.y >= a.y &&
+//                another.x <= b.x && another.y <= b.y;
     }
 
 
-    public synchronized void extend(Point3D<Integer> another) {
+    public synchronized void extend(Point3DInteger another) {
 
         if(a.x == null || b.x == null) {
             a.x = another.x;
@@ -65,15 +66,15 @@ public class BoundingBox {
     }
 
     public synchronized void clear() {
-        a = new Point3D<>();
-        b = new Point3D<>();
+        a = new Point3DInteger();
+        b = new Point3DInteger();
     }
 
-    public Point3D<Integer> getA() {
+    public Point3DInteger getA() {
         return a;
     }
 
-    public Point3D<Integer> getB() {
+    public Point3DInteger getB() {
         return b;
     }
 }

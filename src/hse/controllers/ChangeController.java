@@ -44,18 +44,22 @@ public class ChangeController {
                         ((PerspectiveProjection)Setings.projection).update();
                     }
 
+//                    Setings.bspRebuild =
                     break;
                 case CAMERA_CENTER_MOVE:
                     Camera.getInstance().setC(change.getDirection(), (Double) change.getValue());
                     break;
                 case MODEL_MOVE:
                     obj.setMove(change.getDirection(), (Integer) change.getValue());
+                    Setings.bspRebuild = true;
                     break;
                 case ROTATION:
                     obj.setRotation(change.getDirection(), ((int) change.getValue()));
+                    Setings.bspRebuild = true;
                     break;
                 case SCALE_CHANGE:
                     obj.setScale( (Double) change.getValue());
+                    Setings.bspRebuild = true;
                     break;
             }
         }

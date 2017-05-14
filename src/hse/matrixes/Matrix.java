@@ -1,8 +1,8 @@
 package hse.matrixes;
 
-import hse.objects.Point3D;
+import hse.objects.Point3DDouble;
+import hse.objects.Point3DInteger;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,8 +51,8 @@ public class Matrix {
         return matrix.get(j).get(i);//right
     }
 
-    public Point3D<Double> multiple(Point3D<Double> point) {
-        Point3D<Double> result = new Point3D();
+    public Point3DDouble multiple(Point3DDouble point) {
+        Point3DDouble result = new Point3DDouble();
 
         List<Double> sub = matrix.get(0);
         result.setX((point.getX() * sub.get(0) + point.getY() * sub.get(1) + point.getZ() * sub.get(2) + 1 * sub.get(3)));
@@ -63,6 +63,8 @@ public class Matrix {
         sub = matrix.get(2);
         result.setZ((point.getX() * sub.get(0) + point.getY() * sub.get(1) + point.getZ() * sub.get(2) + 1 * sub.get(3)));
 
+        // TODO: 03.05.17  
+        
         return result;
     }
 
@@ -87,8 +89,8 @@ public class Matrix {
     }
 
 
-    public Point3D<Integer> multipleInteger(Point3D<Integer> point) {
-        Point3D<Integer> result = new Point3D();
+    public Point3DInteger multipleInteger(Point3DInteger point) {
+        Point3DInteger result = new Point3DInteger();
         List<Double> sub = matrix.get(0);
         result.setX((int)(point.getX() * sub.get(0) + point.getY() * sub.get(1) + point.getZ() * sub.get(2) + 1 * sub.get(3)));
 
@@ -97,6 +99,8 @@ public class Matrix {
 
         sub = matrix.get(2);
         result.setZ((int)(point.getX() * sub.get(0) + point.getY() * sub.get(1) + point.getZ() * sub.get(2) + 1 * sub.get(3)));
+
+        //todo mult w
 
         return result;
     }

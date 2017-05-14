@@ -1,28 +1,20 @@
 package hse.controllers;
 
-import com.sun.org.apache.xerces.internal.impl.dv.xs.DoubleDV;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import com.sun.scenario.Settings;
 import hse.DrawingMode;
 import hse.Setings;
 import hse.TaskStatus;
+import hse.ZBuffer;
+import hse.bsptree.BspTree;
+import hse.bsptree.SideLocation;
 import hse.light.FillType;
 import hse.matrixes.Matrix;
-import hse.matrixes.Projections;
 import hse.matrixes.conversations.MoveMatrix;
 import hse.objects.*;
-import hse.ui.SettingsForm;
 import hse.ui.SwapChain;
 import javafx.util.Pair;
-import sun.plugin2.message.Conversation;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
 
 /**
  * Created by Yura on 04.01.2017.
@@ -53,6 +45,10 @@ public class Task {
         sidesToDraw.add(side);
     }
 
+    public void addSides(List<Side> sides) {
+        sidesToDraw.addAll(sides);
+    }
+
     public Task(Matrix rotation, MoveMatrix move, Object3D object3D, FillType fillType, boolean isLightOn, DrawingMode drawingMode) {
         this.rotation = rotation;
         this.move = move;
@@ -78,18 +74,18 @@ public class Task {
                 side -> {
                     side.getPointsInfo().forEach(
                             pointInfo -> {
-                                Point3D<Double> localPoint = object3D.getLocalPoints().get(
+                                Point3DDouble localPoint = object3D.getLocalPoints().get(
                                         pointInfo.getIndex()
                                 );
 
                                 pointInfo.setTransformedNormal(new Normal(rotation.multiple(pointInfo.getNormal())));
 
-                                Pair<ChangeableSupplier<Boolean>, Point3D<Double>> pair = object3D.getTransformedPoints().
+                                Pair<ChangeableSupplier<Boolean>, Point3DDouble> pair = object3D.getTransformedPoints().
                                         get(localPoint);
                                 if (!pair.getKey().get()) {
-                                    Point3D<Double> point3D = pair.getValue();
-                                    Point3D<Double> converted = lookat.multiple(viewPort.multiple(Setings.projection.multiple(rotation.multiple(localPoint))));
-                                    point3D.swap( converted);
+                                    Point3DDouble point3DDouble = pair.getValue();
+                                    Point3DDouble converted = lookat.multiple(viewPort.multiple(Setings.projection.multiple(rotation.multiple(localPoint))));
+                                    point3DDouble.swap( converted);
 
                                     pair.getKey().set(true);
                                 }
@@ -120,8 +116,43 @@ public class Task {
     }
 
 
+    public void compeleWithBspTree() {
+        BspTree instance = BspTree.getInstance();
+        time = System.currentTimeMillis();
+        status = TaskStatus.WORKING;
+        if(Setings.bspRebuild) {
+            System.out.println("Bsp tree rebuild");
+            instance.clear();
+
+            sidesToDraw.forEach(
+                    side -> {
+                        side.getPointsInfo().forEach(
+                                pointInfo -> {
+                                    Point3DDouble localPoint = object3D.getLocalPoints().get(
+                                            pointInfo.getIndex()
+                                    );
+
+                                    pointInfo.setTransformedNormal(new Normal(rotation.multiple(pointInfo.getNormal())));
+                                    Point3DDouble converted = (Setings.projection.multiple(rotation.multiple(localPoint)));
+                                    pointInfo.getPoint().swap(converted);
+                                }
+                        );
+                    }
+            );
+
+            instance.insert(sidesToDraw, SideLocation.SPANNING, SideLocation.ON);
+        }
+        instance.draw();
+        ZBuffer.getBuffer().clear();
+    }
+
     public long getTime() {
         return time;
+    }
+
+
+    public boolean isFinished() {
+        return status == TaskStatus.FINISHED;
     }
 
     @Override

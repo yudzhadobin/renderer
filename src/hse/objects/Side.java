@@ -1,6 +1,7 @@
 package hse.objects;
 
-import com.sun.prism.image.ViewPort;
+import hse.OculusCulling;
+import hse.bsptree.Plane3D;
 import hse.Setings;
 import hse.UvCoordinate;
 import hse.ZBuffer;
@@ -12,8 +13,9 @@ import hse.ui.SwapChain;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.DoubleSummaryStatistics;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Yura on 01.01.2017.
@@ -29,31 +31,49 @@ public class Side {
         this.pointsInfo = infos;
     }
 
+    public Side(PointInfo... infos) {
+        this.pointsInfo = Arrays.asList(infos);
+    }
     @SuppressWarnings("unchecked")
     public void drawContour(SwapChain swapChain, MoveMatrix move, Matrix projection, Object3D object) {
         Graphics graphics = swapChain.getDrawing().getGraphics();
+        Point3DDouble a;
+        Point3DDouble b;
+        Point3DDouble c;
+        if(Setings.oculusCullingMode == OculusCulling.BSP_TREE) {
+            Matrix lookat = Camera.getInstance().lookat();
+            Matrix viewPort = Camera.getInstance().viewport(
+                    (Setings.WINDOW_WIDTH / 8),
+                    (Setings.WINDOW_HEIGHT / 8),
+                    (int)(Setings.WINDOW_WIDTH * 3/4d),
+                    (int)(Setings.WINDOW_HEIGHT * 3/4d)
+            );
 
-        Point3D a = pointsInfo.get(0).point;
-        Point3D b = pointsInfo.get(1).point;
-        Point3D c = pointsInfo.get(2).point;
+            a = lookat.multiple(viewPort.multiple(pointsInfo.get(0).point));
+            b = lookat.multiple(viewPort.multiple(pointsInfo.get(1).point));
+            c = lookat.multiple(viewPort.multiple(pointsInfo.get(2).point));
+        } else {
+            a = pointsInfo.get(0).point;
+            b = pointsInfo.get(1).point;
+            c = pointsInfo.get(2).point;
+        }
+
+        Point3DDouble convertedA = a;
+        Point3DDouble convertedB = b;
+        Point3DDouble convertedC = c;
 
 
-        Point3D<Double> convertedA = a;
-        Point3D<Double> convertedB = b;
-        Point3D<Double> convertedC = c;
-
-
-//        Point3D<Double> convertedA = lookat.multiple(viewPort.multiple(projection).multiple(a));
-//        Point3D<Double> convertedB = lookat.multiple(viewPort.multiple(projection).multiple(b));
-//        Point3D<Double> convertedC = lookat.multiple(viewPort.multiple(projection).multiple(c));
+//        Point3DDouble<Double> convertedA = lookat.multiple(viewPort.multiple(projection).multiple(a));
+//        Point3DDouble<Double> convertedB = lookat.multiple(viewPort.multiple(projection).multiple(b));
+//        Point3DDouble<Double> convertedC = lookat.multiple(viewPort.multiple(projection).multiple(c));
 
         graphics.drawLine(convertedA.x.intValue(), convertedA.y.intValue(), convertedB.x.intValue(), convertedB.y.intValue());
         graphics.drawLine(convertedB.x.intValue(), convertedB.y.intValue(), convertedC.x.intValue(), convertedC.y.intValue());
         graphics.drawLine(convertedC.x.intValue(), convertedC.y.intValue(), convertedA.x.intValue(), convertedA.y.intValue());
 
-//        object.box.extend(new Point3D<>(convertedA.getX().intValue(), convertedA.getY().intValue(), convertedA.getZ().intValue()));
-//        object.box.extend(new Point3D<>(convertedB.getX().intValue(), convertedB.getY().intValue(), convertedB.getZ().intValue()));
-//        object.box.extend(new Point3D<>(convertedC.getX().intValue(), convertedC.getY().intValue(), convertedC.getZ().intValue()));
+//        object.box.extend(new Point3DDouble<>(convertedA.getX().intValue(), convertedA.getY().intValue(), convertedA.getZ().intValue()));
+//        object.box.extend(new Point3DDouble<>(convertedB.getX().intValue(), convertedB.getY().intValue(), convertedB.getZ().intValue()));
+//        object.box.extend(new Point3DDouble<>(convertedC.getX().intValue(), convertedC.getY().intValue(), convertedC.getZ().intValue()));
 
         object.box.extend(transform(convertedA));
         object.box.extend(transform(convertedB));
@@ -64,10 +84,28 @@ public class Side {
     @SuppressWarnings("unchecked")
     public void drawFill(SwapChain swapChain,MoveMatrix move, Matrix projection, Object3D object, Boolean isLightOn) {
         BufferedImage drawingPanel = swapChain.getDrawing();
+        Point3DInteger a;
+        Point3DInteger b;
+        Point3DInteger c;
 
-        Point3D<Integer> a = transform(pointsInfo.get(0).point);
-        Point3D<Integer> b = transform(pointsInfo.get(1).point);
-        Point3D<Integer> c = transform(pointsInfo.get(2).point);
+        if(Setings.oculusCullingMode == OculusCulling.BSP_TREE) {
+            Matrix lookat = Camera.getInstance().lookat();
+            Matrix viewPort = Camera.getInstance().viewport(
+                    (Setings.WINDOW_WIDTH / 8),
+                    (Setings.WINDOW_HEIGHT / 8),
+                    (int)(Setings.WINDOW_WIDTH * 3/4d),
+                    (int)(Setings.WINDOW_HEIGHT * 3/4d)
+            );
+
+            a = transform(lookat.multiple(viewPort.multiple(pointsInfo.get(0).point)));
+            b = transform(lookat.multiple(viewPort.multiple(pointsInfo.get(1).point)));
+            c = transform(lookat.multiple(viewPort.multiple(pointsInfo.get(2).point)));
+        } else {
+            a = transform(pointsInfo.get(0).point);
+            b = transform(pointsInfo.get(1).point);
+            c = transform(pointsInfo.get(2).point);
+        }
+
         if (a.y > b.y) {
             a.swap(b);
         }
@@ -92,13 +130,13 @@ public class Side {
 
             double alpha = (double) i / totalHeight;
             double beta = (double) (i - (secondHalf ? b.y - a.y : 0)) / segmentHeight;
-            Point3D<Integer> A = new Point3D<>(a);
+            Point3DInteger A = new Point3DInteger(a);
             A.x += round((c.x - a.x) * alpha);
             A.y += round((c.y - a.y) * alpha);
             A.z += round((c.z - a.z) * alpha);
 
 
-            Point3D<Integer> B = secondHalf ? new Point3D<>(b) : new Point3D<>(a);
+            Point3DInteger B = secondHalf ? new Point3DInteger(b) : new Point3DInteger(a);
             B.x += round(secondHalf ? (c.x - b.x) * beta : (b.x - a.x) * beta);
             B.y += round(secondHalf ? (c.y - b.y) * beta : (b.y - a.y) * beta);
             B.z += round(secondHalf ? (c.z - b.z) * beta : (b.z - a.z) * beta);
@@ -113,7 +151,7 @@ public class Side {
 
                 double phi = B.x.equals(A.x) ? 1 : (double) (j - A.x) / (double) (B.x - A.x);
 
-                Point3D<Integer> point = new Point3D<>(A);
+                Point3DInteger point = new Point3DInteger(A);
 
                 point.x += round((B.x - A.x) * phi);
                 point.y += round((B.y - A.y) * phi);
@@ -163,9 +201,9 @@ public class Side {
         BufferedImage drawingPanel = swapChain.getDrawing();
 
 
-        Point3D<Integer> a = transform(pointsInfo.get(0).point);
-        Point3D<Integer> b = transform(pointsInfo.get(1).point);
-        Point3D<Integer> c = transform(pointsInfo.get(2).point);
+        Point3DInteger a = transform(pointsInfo.get(0).point);
+        Point3DInteger b = transform(pointsInfo.get(1).point);
+        Point3DInteger c = transform(pointsInfo.get(2).point);
 
         PointInfo aInfo = pointsInfo.get(0);
         PointInfo bInfo = pointsInfo.get(1);
@@ -201,7 +239,7 @@ public class Side {
 
             double alpha = (double) i / totalHeight;
             double beta = (double) (i - (secondHalf ? b.y - a.y : 0)) / segmentHeight;
-            Point3D<Integer> A = new Point3D<>(a);
+            Point3DInteger A = new Point3DInteger(a);
 
             A.x += round((c.x - a.x) * alpha);
             A.y += round((c.y - a.y) * alpha);
@@ -214,7 +252,7 @@ public class Side {
             );
 
 
-            Point3D<Integer> B = secondHalf ? new Point3D<>(b) : new Point3D<>(a);
+            Point3DInteger B = secondHalf ? new Point3DInteger(b) : new Point3DInteger(a);
             B.x += round(secondHalf ? (c.x - b.x) * beta : (b.x - a.x) * beta);
             B.y += round(secondHalf ? (c.y - b.y) * beta : (b.y - a.y) * beta);
             B.z += round(secondHalf ? (c.z - b.z) * beta : (b.z - a.z) * beta);
@@ -238,7 +276,7 @@ public class Side {
 
                 double phi = B.x.equals(A.x) ? 1 : (double) (j - A.x) / (double) (B.x - A.x);
 
-                Point3D<Integer> point = new Point3D<>(A);
+                Point3DInteger point = new Point3DInteger(A);
 
                 point.x += round((B.x - A.x) * phi);
                 point.y += round((B.y - A.y) * phi);
@@ -249,13 +287,9 @@ public class Side {
                         (int) (uvPointA.getY() + (uvPointB.getY() - uvPointA.getY()) * phi),
                         0
                 );
-//
+
                 int savedZ = point.z;
-//                point = projection.multipleInteger(point);
-//
-//                point.x += 600 + move.getX();
-//                point.y = 500 - point.y + move.getY();
-//                savedZ += move.getZ();
+
                 if(!checkPointIsIn(point)) {
                     continue;
                 }
@@ -279,9 +313,9 @@ public class Side {
         BufferedImage drawingPanel = swapChain.getDrawing();
 
 
-        Point3D<Integer> a = transform(pointsInfo.get(0).point);
-        Point3D<Integer> b = transform(pointsInfo.get(1).point);
-        Point3D<Integer> c = transform(pointsInfo.get(2).point);
+        Point3DInteger a = transform(pointsInfo.get(0).point);
+        Point3DInteger b = transform(pointsInfo.get(1).point);
+        Point3DInteger c = transform(pointsInfo.get(2).point);
 
         PointInfo aInfo = pointsInfo.get(0);
         PointInfo bInfo = pointsInfo.get(1);
@@ -329,7 +363,7 @@ public class Side {
 
             double alpha = (double) i / totalHeight;
             double beta = (double) (i - (secondHalf ? b.y - a.y : 0)) / segmentHeight;
-            Point3D<Integer> A = new Point3D<>(a);
+            Point3DInteger A = new Point3DInteger(a);
 
             A.x += round((c.x - a.x) * alpha);
             A.y += round((c.y - a.y) * alpha);
@@ -343,26 +377,25 @@ public class Side {
 
             double intensityA = aIntensity + (cIntensity - aIntensity) * alpha;
 
-            Point3D<Integer> B = secondHalf ? new Point3D<>(b) : new Point3D<>(a);
+            Point3DInteger B = secondHalf ? new Point3DInteger(b) : new Point3DInteger(a);
             B.x += round(secondHalf ? (c.x - b.x) * beta : (b.x - a.x) * beta);
             B.y += round(secondHalf ? (c.y - b.y) * beta : (b.y - a.y) * beta);
             B.z += round(secondHalf ? (c.z - b.z) * beta : (b.z - a.z) * beta);
 
-//            UvCoordinate uvPointB = new UvCoordinate(
-//                    (int) (secondHalf ? bUv.getX() + (cUv.getX() - bUv.getX()) * beta
-//                            : aUv.getX() + (bUv.getX() - aUv.getX()) * beta),
-//                    (int) (secondHalf ? bUv.getY() + (cUv.getY() - bUv.getY()) * beta
-//                            : aUv.getY() + (bUv.getY() - aUv.getY()) * beta),
-//                    0
-//            );
+            UvCoordinate uvPointB = new UvCoordinate(
+                    (int) (secondHalf ? bUv.getX() + (cUv.getX() - bUv.getX()) * beta
+                            : aUv.getX() + (bUv.getX() - aUv.getX()) * beta),
+                    (int) (secondHalf ? bUv.getY() + (cUv.getY() - bUv.getY()) * beta
+                            : aUv.getY() + (bUv.getY() - aUv.getY()) * beta),
+                    0
+            );
 
             double intensityB = secondHalf ? bIntensity + (cIntensity - bIntensity) * beta
                     : aIntensity + (bIntensity - aIntensity) * beta;
 
             if (A.x > B.x) {
                 A.swap(B);
-//                uvPointA.swap(uvPointB);
-
+                uvPointA.swap(uvPointB);
                 double sup = intensityB;
                 intensityB = intensityA;
                 intensityA = sup;
@@ -374,17 +407,17 @@ public class Side {
 
                 double phi = B.x.equals(A.x) ? 1 : (double) (j - A.x) / (double) (B.x - A.x);
 
-                Point3D<Integer> point = new Point3D<>(A);
+                Point3DInteger point = new Point3DInteger(A);
 
                 point.x += round((B.x - A.x) * phi);
                 point.y += round((B.y - A.y) * phi);
                 point.z += round((B.z - A.z) * phi);
 
-//                UvCoordinate uvPoint = new UvCoordinate(
-//                        (int) (uvPointA.getX() + (uvPointB.getX() - uvPointA.getX()) * phi),
-//                        (int) (uvPointA.getY() + (uvPointB.getY() - uvPointA.getY()) * phi),
-//                        0
-//                );
+                UvCoordinate uvPoint = new UvCoordinate(
+                        (int) (uvPointA.getX() + (uvPointB.getX() - uvPointA.getX()) * phi),
+                        (int) (uvPointA.getY() + (uvPointB.getY() - uvPointA.getY()) * phi),
+                        0
+                );
 
                 double pointIntensity = intensityA + (intensityB - intensityA) * phi;
                 int savedZ = point.z;
@@ -396,12 +429,12 @@ public class Side {
 
                 if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
                     ZBuffer.getBuffer().set(point.x, point.y, savedZ);
-                    Color color = new Color((int) (255 * pointIntensity), (int) (255 * pointIntensity),
-                            (int) (255 * pointIntensity));
-                    drawingPanel.setRGB(point.x, point.y, color.getRGB());
+//                    Color color = new Color((int) (255 * pointIntensity), (int) (255 * pointIntensity),
+//                            (int) (255 * pointIntensity));
+//                    drawingPanel.setRGB(point.x, point.y, color.getRGB());
 
-//                    drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
-//                            .getRGB(uvPoint.getX(), uvPoint.getY())));
+                    drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
+                            .getRGB(uvPoint.getX(), uvPoint.getY())));
                     object.box.extend(point);
 
 
@@ -419,9 +452,9 @@ public class Side {
         BufferedImage drawingPanel = swapChain.getDrawing();
 
 
-        Point3D<Integer> a = transform(pointsInfo.get(0).point);
-        Point3D<Integer> b = transform(pointsInfo.get(1).point);
-        Point3D<Integer> c = transform(pointsInfo.get(2).point);
+        Point3DInteger a = transform(pointsInfo.get(0).point);
+        Point3DInteger b = transform(pointsInfo.get(1).point);
+        Point3DInteger c = transform(pointsInfo.get(2).point);
 
         PointInfo aInfo = pointsInfo.get(0);
         PointInfo bInfo = pointsInfo.get(1);
@@ -464,7 +497,7 @@ public class Side {
 
             double alpha = (double) i / totalHeight;
             double beta = (double) (i - (secondHalf ? b.y - a.y : 0)) / segmentHeight;
-            Point3D<Integer> A = new Point3D<>(a);
+            Point3DInteger A = new Point3DInteger(a);
 
             A.x += round((c.x - a.x) * alpha);
             A.y += round((c.y - a.y) * alpha);
@@ -477,7 +510,7 @@ public class Side {
             );
 
             Normal normalA = (new Normal()).plus(aNormal).plus((cNormal.minus(aNormal).multiple(alpha)));
-            Point3D<Integer> B = secondHalf ? new Point3D<>(b) : new Point3D<>(a);
+            Point3DInteger B = secondHalf ? new Point3DInteger(b) : new Point3DInteger(a);
             B.x += round(secondHalf ? (c.x - b.x) * beta : (b.x - a.x) * beta);
             B.y += round(secondHalf ? (c.y - b.y) * beta : (b.y - a.y) * beta);
             B.z += round(secondHalf ? (c.z - b.z) * beta : (b.z - a.z) * beta);
@@ -499,13 +532,12 @@ public class Side {
                normalA.swap(normalB);
 
             }
-
             for (int j = A.x; j <= B.x; j++) {
 
 
                 double phi = B.x.equals(A.x) ? 1 : (double) (j - A.x) / (double) (B.x - A.x);
 
-                Point3D<Integer> point = new Point3D<>(A);
+                Point3DInteger point = new Point3DInteger(A);
 
                 point.x += round((B.x - A.x) * phi);
                 point.y += round((B.y - A.y) * phi);
@@ -564,18 +596,33 @@ public class Side {
         return pointsInfo;
     }
 
-    private Point3D<Integer> transform(Point3D<Double> point3D) {
-        Point3D<Integer> result = new Point3D<>();
-        result.x = round(point3D.x);
-        result.y = round(point3D.y);
-        result.z = round(point3D.z);
+    public Plane3D getPlane() {
+        Normal normal;
+
+        if (pointsInfo.stream().map(PointInfo::getTransformedNormal).anyMatch(Objects::isNull)) {
+            normal = pointsInfo.stream()
+                    .map(PointInfo::getNormal)
+                    .reduce(Normal::plus).map(Normal::normalize).get();
+        } else {
+            normal = pointsInfo.stream()
+                    .map(PointInfo::getTransformedNormal)
+                    .reduce(Normal::plus).map(Normal::normalize).get();
+        }
+        return new Plane3D(normal, pointsInfo.get(0).point);
+    }
+
+    private Point3DInteger transform(Point3DDouble point3DDouble) {
+        Point3DInteger result = new Point3DInteger();
+        result.x = round(point3DDouble.x);
+        result.y = round(point3DDouble.y);
+        result.z = round(point3DDouble.z);
 
         return result;
     }
 
-    private boolean checkPointIsIn(Point3D<Integer> point3D) {
-        return point3D.getX() > 0 && point3D.getY() > 0
-                && point3D.getX() < Setings.WINDOW_WIDTH && point3D.getY() < Setings.WINDOW_HEIGHT;
+    private boolean checkPointIsIn(Point3DInteger point3DDouble) {
+        return point3DDouble.getX() > 0 && point3DDouble.getY() > 0
+                && point3DDouble.getX() < Setings.WINDOW_WIDTH && point3DDouble.getY() < Setings.WINDOW_HEIGHT;
     }
 
 }

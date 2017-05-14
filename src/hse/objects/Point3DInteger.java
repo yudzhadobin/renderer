@@ -1,38 +1,35 @@
 package hse.objects;
 
-import hse.UvCoordinate;
-import hse.controllers.change.Direction;
-import hse.matrixes.Matrix;
-
-import java.awt.*;
-
 /**
- * Created by Yura on 01.01.2017.
+ * Created by yuriy on 03.05.17.
  */
-public class Point3D<T extends Number> {
+public class Point3DInteger {
 
-    T x;
-    T y;
-    T z;
 
-    public Point3D() {
+    Integer x;
+    Integer y;
+    Integer z;
+    Integer w;
+
+    public Point3DInteger() {
 
     }
 
-    public Point3D(T x, T y, T z) {
+    public Point3DInteger(Integer x, Integer y, Integer z) {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.w = 1;
     }
 
-    public Point3D(Point3D<T> a) {
+    public Point3DInteger(Point3DInteger a) {
         this.x = a.x;
         this.y = a.y;
         this.z = a.z;
     }
 
-    public void swap(Point3D<T> another) {
-        T sup = x;
+    public void swap(Point3DInteger another) {
+        Integer sup = x;
         x = another.x;
         another.x = sup;
 
@@ -46,27 +43,27 @@ public class Point3D<T extends Number> {
     }
 
 
-    public T getX() {
+    public Integer getX() {
         return x;
     }
 
-    public void setX(T x) {
+    public void setX(Integer x) {
         this.x = x;
     }
 
-    public T getY() {
+    public Integer getY() {
         return y;
     }
 
-    public void setY(T y) {
+    public void setY(Integer y) {
         this.y = y;
     }
 
-    public T getZ() {
+    public Integer getZ() {
         return z;
     }
 
-    public void setZ(T z) {
+    public void setZ(Integer z) {
         this.z = z;
     }
 
@@ -75,11 +72,11 @@ public class Point3D<T extends Number> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Point3D<?> point3D = (Point3D<?>) o;
+        Point3DInteger point3DInteger = (Point3DInteger) o;
 
-        if (x != null ? !x.equals(point3D.x) : point3D.x != null) return false;
-        if (y != null ? !y.equals(point3D.y) : point3D.y != null) return false;
-        return z != null ? z.equals(point3D.z) : point3D.z == null;
+        if (x != null ? !x.equals(point3DInteger.x) : point3DInteger.x != null) return false;
+        if (y != null ? !y.equals(point3DInteger.y) : point3DInteger.y != null) return false;
+        return z != null ? z.equals(point3DInteger.z) : point3DInteger.z == null;
 
     }
 

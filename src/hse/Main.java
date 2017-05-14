@@ -1,20 +1,15 @@
 package hse;
 
-import java.nio.file.Paths;
-
 import hse.controllers.ChangeController;
-import hse.controllers.EventMaster;
-import hse.controllers.Master;
 import hse.controllers.change.Change;
 import hse.controllers.change.ChangeType;
 import hse.controllers.change.Direction;
-import hse.matrixes.Projections;
-import hse.objects.Camera;
 import hse.objects.Object3D;
 import hse.ui.CameraForm;
 import hse.ui.MainForm;
 
 import java.awt.*;
+import java.nio.file.Paths;
 
 /**
  * Created by Yura on 25.12.2016.
@@ -51,13 +46,49 @@ public class Main {
                 ChangeType.SCALE_CHANGE,
                 0.3
         ));
-        //        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
-//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
-//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
-//        Stage.getInstance().addObject(Object3D.createFromFile(Paths.get("./models/cube.obj")));
-//        Master master = new Master(form);
+
+        controller.performChange(new Change(
+                "head",
+                ChangeType.ROTATION,
+                Direction.X,
+                90
+        ));
 
         new CameraForm(controller).setVisible(true);
+//        Object3D fromFile = Object3D.createFromFile(Paths.get("./models/head.obj"));
 
+//        PointInfo a = new PointInfo(new Point3DDouble(0.0, 0.0 ,0.0), null, new Normal(0.0, 0.0 , 1.0), 0);
+//        PointInfo b = new PointInfo(new Point3DDouble(1.0, 0.0 ,0.0), null, new Normal(0.0, 0.0 , 1.0), 0);
+//        PointInfo c = new PointInfo(new Point3DDouble(1.0, 1.0 ,0.0), null, new Normal(0.0, 0.0 , 1.0), 0);
+//
+//        Side side = new Side(a, b, c);
+//
+//        Plane3D plane = side.getPlane();
+//
+//
+//        PointInfo a1 = new PointInfo(new Point3DDouble(0.5, 0.0 ,0.0), null, new Normal(-1.0, 0.0 , 0.0), 0);
+//        PointInfo b1 = new PointInfo(new Point3DDouble(0.5, 0.0 ,1.0), null, new Normal(-1.0, 0.0 , 0.0), 0);
+//        PointInfo c1 = new PointInfo(new Point3DDouble(0.5, 1.0 ,1.0), null, new Normal(-1.0, 0.0 , 0.0), 0);
+//
+//        Side side1 = new Side(a1, b1, c1);
+//
+
+//        Pair<SideLocation, Pair<List<Side>, List<Side>>> split = side1.getPlane().split(side);
+//        BspTree bspTree = new BspTree();
+//        bspTree.insert(fromFile.getSides(), SideLocation.SPANNING, SideLocation.ON);
+//
+//
+////        Pair<SideLocation, Pair<List<Side>, List<Side>>> split1 = fromFile.getSides().get(0).getPlane().split(fromFile.getSides().get(0));
+//        int j =5;
+//        Plane3D plane = fromFile.getSides().get(3).getPlane();
+
+//        List<Plane3D.SideLocation> sideLocations = fromFile.getSides().stream().map(side -> {plane.split(side);}).collect(Collectors.toList());
+
+//        fromFile.getSides().forEach(side -> {
+//            plane.split(side);
+//        });
     }
+
+
+
 }

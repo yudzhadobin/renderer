@@ -1,8 +1,5 @@
 package hse.light;
 
-import hse.objects.Point3D;
-import hse.objects.PointInfo;
-
 /**
  * Created by Yura on 09.01.2017.
  */

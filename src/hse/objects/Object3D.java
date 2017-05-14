@@ -3,10 +3,6 @@ package hse.objects;
 import hse.TGALoader;
 import hse.UvCoordinate;
 import hse.controllers.change.Direction;
-import hse.matrixes.Matrix;
-import hse.matrixes.Projections;
-import hse.matrixes.conversations.Scale;
-import hse.ui.SwapChain;
 import javafx.util.Pair;
 
 import java.awt.image.BufferedImage;
@@ -19,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * Created by Yura on 01.01.2017.
@@ -27,9 +22,10 @@ import java.util.function.Supplier;
 public class Object3D {
 
     public String id;
-    List<Point3D<Double>> localPoints;
+    List<Point3DDouble> localPoints;
+    List<Point3DDouble> extraPoints;
 
-    Map<Point3D<Double>,Pair<ChangeableSupplier<Boolean>, Point3D<Double>>> transformedPoints;
+    Map<Point3DDouble,Pair<ChangeableSupplier<Boolean>, Point3DDouble>> transformedPoints;
 
     List<Side> sides;
 
@@ -95,17 +91,17 @@ public class Object3D {
 
                 switch (parts[0]) {
                     case "v":
-                        Point3D<Double> point3D = new Point3D<>(
+                        Point3DDouble point3DDouble = new Point3DDouble(
                                 Double.parseDouble(parts[1]),
                                 Double.parseDouble(parts[2]),
                                 Double.parseDouble(parts[3])
                         );
 
-                        result.localPoints.add(point3D);
+                        result.localPoints.add(point3DDouble);
                         result.transformedPoints.put(
-                                point3D, new Pair<> (
+                                point3DDouble, new Pair<> (
                                         new ChangeableSupplier<Boolean>(false),
-                                        new Point3D<>(point3D)
+                                        new Point3DDouble(point3DDouble)
                                 )
                         );
                         break;
@@ -162,11 +158,11 @@ public class Object3D {
     }
 
 
-    public List<Point3D<Double>> getLocalPoints() {
+    public List<Point3DDouble> getLocalPoints() {
         return localPoints;
     }
 
-    public Map<Point3D<Double>, Pair<ChangeableSupplier<Boolean>, Point3D<Double>>> getTransformedPoints() {
+    public Map<Point3DDouble, Pair<ChangeableSupplier<Boolean>, Point3DDouble>> getTransformedPoints() {
         return transformedPoints;
     }
 

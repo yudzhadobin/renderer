@@ -1,19 +1,18 @@
 package hse.objects;
 
-import com.sun.org.apache.regexp.internal.RESyntaxException;
 import hse.controllers.change.Direction;
 
-import java.util.DoubleSummaryStatistics;
 import static java.lang.Math.*;
 /**
  * Created by Yura on 03.01.2017.
  */
-public class Normal extends Point3D<Double> {
+public class Normal extends Point3DDouble {
 
     public Normal() {
         x = 0.0;
         y = 0.0;
         z = 0.0;
+        w = 0.0;
     }
 
     public void setValue(Direction direction, Double value) {
@@ -31,8 +30,9 @@ public class Normal extends Point3D<Double> {
     }
 
 
-    public Normal(Point3D<Double> point3D) {
-        super(point3D.getX(), point3D.getY(), point3D.getZ());
+    public Normal(Point3DDouble point3DDouble) {
+        super(point3DDouble.getX(), point3DDouble.getY(), point3DDouble.getZ());
+        w = 0.0;
     }
 
     public Normal(Double x, Double y, Double z) {
@@ -45,11 +45,14 @@ public class Normal extends Point3D<Double> {
 
     public Normal plus(Normal another) {
         Normal result = new Normal(this);
+        try {
 
-        result.x += another.x;
-        result.y += another.y;
-        result.z += another.z;
-
+            result.x += another.x;
+            result.y += another.y;
+            result.z += another.z;
+        }catch (NullPointerException ex) {
+            int j =5 ;
+        }
         return result;
     }
 

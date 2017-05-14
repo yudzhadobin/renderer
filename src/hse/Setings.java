@@ -9,9 +9,6 @@ import hse.matrixes.Projections;
  */
 public class Setings {
 
-    public static int offset_X = 0;
-    public static int offset_Y = 0;
-    public static int offset_Z = 0;
 
     public static int WINDOW_HEIGHT = 800;
     public static int WINDOW_WIDTH = 800;
@@ -21,4 +18,7 @@ public class Setings {
     public static Matrix projection = Projections.PERSPECTIVE;
     public static DrawingMode drawingMode = DrawingMode.MODEL;
     public static FillType fillType = FillType.GURO;
+    public static OculusCulling oculusCullingMode = OculusCulling.BSP_TREE;
+
+    public static boolean bspRebuild = true;
 }

@@ -1,8 +1,6 @@
 package hse.controllers;
 
-import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion;
 import hse.*;
-import hse.light.FillType;
 import hse.matrixes.Matrix;
 import hse.matrixes.conversations.*;
 import hse.objects.Object3D;
@@ -37,27 +35,51 @@ public class EventMaster implements Updater{
     }
 
     public void redraw() {
-        ZBuffer.getBuffer().clear();
-        Stage.getInstance().getDisplayedObjects().forEach(Object3D::clear);
+        if (Setings.oculusCullingMode == OculusCulling.BSP_TREE) {
+            long start = System.currentTimeMillis();
+            DrawingMode mode = Setings.drawingMode;
+            boolean isLightOn = Setings.light_on;
+            Object3D currentObject = Stage.getInstance().getObject(0);
+            Matrix a = new RotationX(currentObject.getXRotation());
+            Matrix b = new RotationY(currentObject.getYRotation());
+            Matrix c = new RotationZ(currentObject.getZRotation());
+            Matrix scale = new Scale(currentObject.getScale());
 
-        TaskSet curTask = generateTaskSet();
-        curTask.startTiming();
+            MoveMatrix move = new MoveMatrix(currentObject.getXMove(), currentObject.getYMove(), currentObject.getZMove());
+            Matrix conversations = a.multiple(b).multiple(c).multiple(scale);
+            conversations.set(0,3, currentObject.getXMove());
+            conversations.set(1,3, currentObject.getYMove());
+            conversations.set(2,3, currentObject.getZMove());
+            Stage.getInstance().getDisplayedObjects().forEach(Object3D::clear);
+            Task task = new Task(conversations, move, currentObject, Setings.fillType, isLightOn, mode);
+            task.addSides(Stage.getInstance().getDisplayedObjects().get(0).getSides());
+            task.compeleWithBspTree();
+            form.picturePanel.forceUpdate();
+            Setings.bspRebuild = false;
+            System.out.println(System.currentTimeMillis() - start);
+        } else {
+            ZBuffer.getBuffer().clear();
+            Stage.getInstance().getDisplayedObjects().forEach(Object3D::clear);
 
-        for (int i = 0; i < WORKERS_COUNT; i++) {
-            workers.get(i).setTask(
-                    curTask.getTasks().subList(
-                            i * Stage.getInstance().getObjectCount(),
-                            i * Stage.getInstance().getObjectCount() + Stage.getInstance().getObjectCount())
-            );
+            TaskSet curTask = generateTaskSet();
+            curTask.startTiming();
+
+            for (int i = 0; i < WORKERS_COUNT; i++) {
+                workers.get(i).setTask(
+                        curTask.getTasks().subList(
+                                i * Stage.getInstance().getObjectCount(),
+                                i * Stage.getInstance().getObjectCount() + Stage.getInstance().getObjectCount())
+                );
+            }
+
+            while (!curTask.isFinished()) {}
+
+
+            curTask.endTiming();
+            System.out.println(curTask.getPerformingTime());
+
+            form.picturePanel.forceUpdate();
         }
-
-        while (!curTask.isFinished()) {};
-
-        curTask.endTiming();
-        System.out.println(curTask.getPerformingTime());
-
-        form.picturePanel.forceUpdate();
-
     }
 
     private TaskSet generateTaskSet() {
