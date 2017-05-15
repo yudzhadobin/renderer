@@ -1,0 +1,14 @@
+{
+    "models": [
+      {
+        "id": "head",
+        "pathToFile": "./models/head.obj",
+        "pathToTexture": "./models/head.tga"
+      }
+    ],
+    "environment": {
+      "drawingMode": "CONTOUR"
+    },
+    "duration": 1000
+
+}
