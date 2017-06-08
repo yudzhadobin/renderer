@@ -3,6 +3,8 @@ package hse.ui;
 import hse.Setings;
 import hse.Stage;
 import hse.controllers.ChangeController;
+import hse.controllers.change.Change;
+import hse.controllers.change.ChangeType;
 import hse.objects.Object3D;
 import hse.objects.Point3DInteger;
 
@@ -21,6 +23,8 @@ public class PicturePanel extends JPanel {
     SwapChain swapChain;
 
     ChangeController controller;
+
+    boolean delete = false;
 
     public PicturePanel(ChangeController controller) {
         super();
@@ -42,10 +46,19 @@ public class PicturePanel extends JPanel {
                 );
                 for (Object3D drawedObject : Stage.getInstance().getDisplayedObjects()) {
                     if(drawedObject.getBox().isIn(point3DDouble)) {
-                        EventQueue.invokeLater(() -> {
-                            SettingsForm form = new SettingsForm(drawedObject, controller);
-                            form.setVisible(true);
-                        });
+                        if(delete) {
+                            controller.performChange(new Change(
+                                    drawedObject.id,
+                                    ChangeType.DELETE_OBJECT
+                            ));
+                            delete = false;
+                            return;
+                        } else {
+                            EventQueue.invokeLater(() -> {
+                                SettingsForm form = new SettingsForm(drawedObject, controller);
+                                form.setVisible(true);
+                            });
+                        }
                     }
                 }
             }

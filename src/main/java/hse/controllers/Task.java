@@ -27,12 +27,9 @@ public class Task {
     List<Side> sidesToDraw = new ArrayList<>();
 
     TaskStatus status = TaskStatus.WAITING;
-
     Object3D object3D;
-
     Matrix rotation;
     MoveMatrix move;
-
     FillType fillType;
 
     public void setSidesToDraw(List<Side> sidesToDraw) {
@@ -120,7 +117,7 @@ public class Task {
         time = System.currentTimeMillis();
         status = TaskStatus.WORKING;
         if(Setings.bspRebuild) {
-            System.out.println("Bsp tree rebuild");
+
             instance.clear();
             Map<Object3D, List<Side>> sides = new HashMap<>();
             Stage.getInstance().getDisplayedObjects().forEach(object -> {
@@ -134,7 +131,6 @@ public class Task {
                 Matrix c = new RotationZ(currentObject.getZRotation());
                 Matrix scale = new Scale(currentObject.getScale());
 
-                MoveMatrix move = new MoveMatrix(currentObject.getXMove(), currentObject.getYMove(), currentObject.getZMove());
                 Matrix conversations = a.multiple(b).multiple(c).multiple(scale);
                 conversations.set(0,3, currentObject.getXMove());
                 conversations.set(1,3, currentObject.getYMove());
@@ -147,15 +143,20 @@ public class Task {
                                                 pointInfo.getIndex()
                                         );
 
+                                        Pair<ChangeableSupplier<Boolean>, Point3DDouble> pair = object3DListEntry.getKey().getTransformedPoints().
+                                                get(localPoint);
                                         pointInfo.setTransformedNormal(new Normal(conversations.multiple(pointInfo.getNormal())));
-                                        Point3DDouble converted = (Setings.projection.multiple(conversations.multiple(localPoint)));
-                                        pointInfo.getPoint().swap(converted);
+                                        if (!pair.getKey().get()) {
+                                            Point3DDouble point3DDouble = pair.getValue();
+                                            Point3DDouble converted = Setings.projection.multiple(conversations.multiple(localPoint));
+                                            point3DDouble.swap(converted);
+                                            pair.getKey().set(true);
+                                        };
                                     }
                             );
                         }
                 );
             }
-
             instance.insert(sides, SideLocation.SPANNING, SideLocation.ON);
         }
         instance.draw();

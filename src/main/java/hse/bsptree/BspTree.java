@@ -49,5 +49,6 @@ public class BspTree {
 
     public void clear() {
         node = null;
+        System.out.println("BSP_TREE clear");
     }
 }

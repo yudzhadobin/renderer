@@ -28,6 +28,15 @@ public class Point3DDouble {
         this.w = a.w;
     }
 
+    public Point3DDouble copy() {
+        Point3DDouble result = new Point3DDouble();
+        result.x = this.x;
+        result.y = this.y;
+        result.z = this.z;
+        result.w = this.w;
+        return result;
+    }
+
     public void swap(Point3DDouble another) {
         Double sup = x;
         x = another.x;

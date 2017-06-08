@@ -1,10 +1,7 @@
 package hse.objects;
 
-import hse.OculusCulling;
+import hse.*;
 import hse.bsptree.Plane3D;
-import hse.Setings;
-import hse.UvCoordinate;
-import hse.ZBuffer;
 import hse.light.FillType;
 import hse.light.SimpleIntensity;
 import hse.matrixes.Matrix;
@@ -13,6 +10,7 @@ import hse.ui.SwapChain;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -34,6 +32,23 @@ public class Side {
     public Side(PointInfo... infos) {
         this.pointsInfo = Arrays.asList(infos);
     }
+
+    public static List<Side> createSides(List<PointInfo> infos) {
+        List<Side> result = new ArrayList<>();
+        if(true) {
+            for (int i = 0; i < infos.size() - 2; i++) {
+                result.add(new Side(
+                        Arrays.asList(
+                                infos.get(0),
+                                infos.get(i + 1),
+                                infos.get(i + 2)
+                        )
+                ));
+            }
+        }
+        return result;
+    }
+
     @SuppressWarnings("unchecked")
     public void drawContour(SwapChain swapChain, MoveMatrix move, Matrix projection, Object3D object) {
         Graphics graphics = swapChain.getDrawing().getGraphics();
@@ -63,17 +78,9 @@ public class Side {
         Point3DDouble convertedC = c;
 
 
-//        Point3DDouble<Double> convertedA = lookat.multiple(viewPort.multiple(projection).multiple(a));
-//        Point3DDouble<Double> convertedB = lookat.multiple(viewPort.multiple(projection).multiple(b));
-//        Point3DDouble<Double> convertedC = lookat.multiple(viewPort.multiple(projection).multiple(c));
-
         graphics.drawLine(convertedA.x.intValue(), convertedA.y.intValue(), convertedB.x.intValue(), convertedB.y.intValue());
         graphics.drawLine(convertedB.x.intValue(), convertedB.y.intValue(), convertedC.x.intValue(), convertedC.y.intValue());
         graphics.drawLine(convertedC.x.intValue(), convertedC.y.intValue(), convertedA.x.intValue(), convertedA.y.intValue());
-
-//        object.box.extend(new Point3DDouble<>(convertedA.getX().intValue(), convertedA.getY().intValue(), convertedA.getZ().intValue()));
-//        object.box.extend(new Point3DDouble<>(convertedB.getX().intValue(), convertedB.getY().intValue(), convertedB.getZ().intValue()));
-//        object.box.extend(new Point3DDouble<>(convertedC.getX().intValue(), convertedC.getY().intValue(), convertedC.getZ().intValue()));
 
         object.box.extend(transform(convertedA));
         object.box.extend(transform(convertedB));
@@ -158,17 +165,22 @@ public class Side {
                 point.z += round((B.z - A.z) * phi);
 
                 int savedZ = point.z;
-                //point = projection.multipleInteger(point);
 
 
-                if(!checkPointIsIn(point)) {
+                if (!checkPointIsIn(point)) {
                     continue;
                 }
-                if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
-                    ZBuffer.getBuffer().set(point.x, point.y, savedZ);
+
+//                if (Setings.oculusCullingMode == OculusCulling.BSP_TREE) {
+                if (false) {
                     drawingPanel.setRGB(point.x, point.y, color.getRGB());
                     object.box.extend(point);
-
+                } else {
+                    if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
+                        ZBuffer.getBuffer().set(point.x, point.y, savedZ);
+                        drawingPanel.setRGB(point.x, point.y, color.getRGB());
+                        object.box.extend(point);
+                    }
                 }
 
 
@@ -181,16 +193,20 @@ public class Side {
 
     @SuppressWarnings("unchecked")
     public void drawTextured(SwapChain swapChain, MoveMatrix move, Matrix projection, Object3D object, FillType fillType, Boolean isLightOn) {
-        switch (fillType) {
-            case ORDINAL:
-                drawTexturedOrdinal(swapChain, move, projection, object, isLightOn);
-                break;
-            case GURO:
-                drawTexturedGuro(swapChain, move, projection, object, isLightOn);
-                break;
-            case FONG:
-                drawTexturedFong(swapChain, move, projection, object, isLightOn);
-                break;
+        if(object.getTexture() != null) {
+            switch (fillType) {
+                case ORDINAL:
+                    drawTexturedOrdinal(swapChain, move, projection, object, isLightOn);
+                    break;
+                case GURO:
+                    drawTexturedGuro(swapChain, move, projection, object, isLightOn);
+                    break;
+                case FONG:
+                    drawTexturedFong(swapChain, move, projection, object, isLightOn);
+                    break;
+            }
+        } else {
+            drawFill(swapChain, move, projection, object, isLightOn);
         }
     }
 
@@ -429,10 +445,15 @@ public class Side {
 
                 if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
                     ZBuffer.getBuffer().set(point.x, point.y, savedZ);
-//                    Color color = new Color((int) (255 * pointIntensity), (int) (255 * pointIntensity),
-//                            (int) (255 * pointIntensity));
-//                    drawingPanel.setRGB(point.x, point.y, color.getRGB());
-
+                      Color color;
+                    if(Setings.drawingMode.equals(DrawingMode.TEXTURED)) {
+                        drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
+                                .getRGB(uvPoint.getX(), uvPoint.getY())));
+                    } else {
+                        color = new Color((int) (255 * pointIntensity), (int) (255 * pointIntensity),
+                                (int) (255 * pointIntensity));
+                        drawingPanel.setRGB(point.x, point.y, color.getRGB());
+                    }
                     drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
                             .getRGB(uvPoint.getX(), uvPoint.getY())));
                     object.box.extend(point);
@@ -559,9 +580,15 @@ public class Side {
 
                 if (ZBuffer.getBuffer().get(point.x, point.y) < savedZ) {
                     ZBuffer.getBuffer().set(point.x, point.y, savedZ);
-                    Color color = new Color((int) (255 * pointIntensity), (int) (255 * pointIntensity),
-                            (int) (255 * pointIntensity));
-                    drawingPanel.setRGB(point.x, point.y, color.getRGB());
+                    Color color;
+                    if(Setings.drawingMode.equals(DrawingMode.TEXTURED)) {
+                        drawingPanel.setRGB(point.x, point.y, getRGB(pointIntensity, object.getTexture()
+                                .getRGB(uvPoint.getX(), uvPoint.getY())));
+                    } else {
+                        color = new Color((int) (255 * pointIntensity), (int) (255 * pointIntensity),
+                                (int) (255 * pointIntensity));
+                        drawingPanel.setRGB(point.x, point.y, color.getRGB());
+                    }
                     object.box.extend(point);
 
                 }

@@ -1,5 +1,6 @@
 package hse;
 
+import hse.objects.Camera;
 import hse.objects.Object3D;
 
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ public class Stage {
 
     static public double diffuseReflectionCoef = .70;
     static public double lightIntensity = 1;
-    static public int light_x = 50;
-    static public int light_y = 50;
-    static public int light_z = 10;
+    static public int light_x = 0;
+    static public int light_y = 0;
+    static public int light_z = 100;
 
     private List<Object3D> displayedObjects = new ArrayList<>();
 
@@ -30,6 +31,16 @@ public class Stage {
         displayedObjects.add(object);
     }
 
+    public void deleteObject(String id) {
+        for (int i = 0; i < displayedObjects.size(); i++) {
+            Object3D object3D = displayedObjects.get(i);
+            if(object3D.id.equals(id)) {
+                displayedObjects.remove(object3D);
+                return;
+            }
+        }
+    }
+
     public int getObjectCount() {
         return displayedObjects.size();
     }
@@ -38,6 +49,10 @@ public class Stage {
         return displayedObjects.get(index);
     }
 
+    public void clear() {
+        displayedObjects.clear();
+        Camera.getInstance().clear();
+    }
 
     public Object3D getObject(String id) {
         if(id == null) {

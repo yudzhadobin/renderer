@@ -18,6 +18,13 @@ public class UvCoordinate {
         this(uvCoordinates.getX(), uvCoordinates.getY(), uvCoordinates.getZ());
     }
 
+    public UvCoordinate copy() {
+        UvCoordinate coordinate = new UvCoordinate(
+                this
+        );
+        return coordinate;
+    }
+
     public int getX() {
         return x;
     }

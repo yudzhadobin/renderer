@@ -1,6 +1,5 @@
 package hse.ui;
 
-import com.sun.scenario.Settings;
 import hse.Setings;
 
 import java.awt.*;
@@ -9,7 +8,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 import java.util.Hashtable;
-import java.util.Set;
 
 /**
  * Created by Yura on 25.12.2016.
@@ -38,6 +36,9 @@ public class SwapChain {
         visible = drawing;
         drawing = sup;
         drawing.getGraphics().clearRect(0,0, Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT);
+//        drawing.getGraphics().setColor(Color.YELLOW);
+//        drawing.getGraphics().fillRect(0,0, Setings.WINDOW_WIDTH, Setings.WINDOW_HEIGHT);
+
     }
 
     public BufferedImage getVisible() {

@@ -6,6 +6,7 @@ import hse.controllers.ChangeController;
 import hse.controllers.change.Change;
 import hse.controllers.change.ChangeType;
 import hse.controllers.change.Direction;
+import hse.light.FillType;
 import hse.matrixes.Projections;
 import hse.objects.Object3D;
 
@@ -29,6 +30,7 @@ public class SettingsForm extends JFrame {
     JSpinner moveZ = new JSpinner();
     JComboBox projection = new JComboBox();
     JComboBox drawMode = new JComboBox();
+    JComboBox fillMode = new JComboBox();
 
     JCheckBox light = new JCheckBox();
 
@@ -90,6 +92,27 @@ public class SettingsForm extends JFrame {
                 }
         );
 
+        fillMode.addItem("Сплошная");
+        fillMode.addItem("Фонг");
+        fillMode.addItem("Гуро");
+
+        fillMode.addItemListener(e -> {
+            if(e.getItem().equals("Сплошная")) {
+                Setings.fillType = FillType.ORDINAL;
+            }
+            if(e.getItem().equals("Фонг")) {
+                Setings.fillType = FillType.FONG;
+            }
+            if(e.getItem().equals("Гуро")) {
+                Setings.fillType = FillType.GURO;
+            }
+
+            controller.performChange(new Change(
+                    object3D.id,
+                    ChangeType.CHANGE_FILL
+            ));
+        });
+
         contentPane.setLayout(new FlowLayout());
         contentPane.add(angleX);
         contentPane.add(angleY);
@@ -101,11 +124,12 @@ public class SettingsForm extends JFrame {
         contentPane.add(projection);
         contentPane.add(light);
         contentPane.add(drawMode);
+        contentPane.add(fillMode);
 
     }
 
     private void initScale() {
-        SpinnerModel sm = new SpinnerNumberModel(1, 0, 500, 1); //default value,lower bound,upper bound,increment by
+        SpinnerModel sm = new SpinnerNumberModel(1, 0, 500, 0.1); //default value,lower bound,upper bound,increment by
         scale.setModel(sm);
         scale.addChangeListener(
                 e -> {

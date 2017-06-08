@@ -2,7 +2,10 @@ package hse.controllers;
 
 import hse.*;
 import hse.matrixes.Matrix;
-import hse.matrixes.conversations.*;
+import hse.matrixes.conversations.RotationX;
+import hse.matrixes.conversations.RotationY;
+import hse.matrixes.conversations.RotationZ;
+import hse.matrixes.conversations.Scale;
 import hse.objects.Object3D;
 import hse.objects.Side;
 import hse.ui.MainForm;
@@ -41,10 +44,15 @@ public class EventMaster implements Updater{
             boolean isLightOn = Setings.light_on;
             Stage.getInstance().getDisplayedObjects().forEach(Object3D::clear);
             Task task = new Task(null, null, null, Setings.fillType, isLightOn, mode);
+            if(Setings.bspRebuild) {
+                System.out.println("tree rebuild");
+            }
             task.compeleWithBspTree();
             form.picturePanel.forceUpdate();
             Setings.bspRebuild = false;
-            System.out.println(System.currentTimeMillis() - start);
+            if(Setings.IS_DEBUG) {
+                System.out.println(System.currentTimeMillis() - start);
+            }
         } else {
             ZBuffer.getBuffer().clear();
             Stage.getInstance().getDisplayedObjects().forEach(Object3D::clear);
@@ -62,10 +70,10 @@ public class EventMaster implements Updater{
 
             while (!curTask.isFinished()) {}
 
-
             curTask.endTiming();
-            System.out.println(curTask.getPerformingTime());
-
+            if(Setings.IS_DEBUG) {
+                System.out.println(curTask.getPerformingTime());
+            }
             form.picturePanel.forceUpdate();
         }
     }
@@ -85,14 +93,14 @@ public class EventMaster implements Updater{
                 Matrix c = new RotationZ(currentObject.getZRotation());
                 Matrix scale = new Scale(currentObject.getScale());
 
-                MoveMatrix move = new MoveMatrix(currentObject.getXMove(), currentObject.getYMove(), currentObject.getZMove());
+//                MoveMatrix move = new MoveMatrix(currentObject.getXMove(), currentObject.getYMove(), currentObject.getZMove());
                 Matrix conversations = a.multiple(b).multiple(c).multiple(scale);
                 conversations.set(0,3, currentObject.getXMove());
                 conversations.set(1,3, currentObject.getYMove());
                 conversations.set(2,3, currentObject.getZMove());
 
 //                System.out.println(co/nversations);
-                taskSet.addTask(new Task(conversations, move, stage.getObject(j), Setings.fillType, isLightOn, mode));
+                taskSet.addTask(new Task(conversations, null, stage.getObject(j), Setings.fillType, isLightOn, mode));
             }
         }
 

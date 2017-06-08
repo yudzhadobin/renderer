@@ -126,7 +126,7 @@ public class Object3D {
                                     Integer.parseInt(infos[0]) - 1
                             ));
                         }
-                        result.sides.add(new Side(pointInfos));
+                        result.sides.addAll(Side.createSides(pointInfos));
                         break;
 
                     case "vt":
@@ -176,8 +176,16 @@ public class Object3D {
         this.move.set(direction.ordinal(), value);
     }
 
+    public double getMove(Direction direction) {
+        return this.move.get(direction.ordinal());
+    }
+
     public void setRotation(Direction direction, int value) {
         this.rotations.set(direction.ordinal(), value);
+    }
+
+    public int getRotation(Direction direction) {
+        return  this.rotations.get(direction.ordinal());
     }
 
     public void setXRotation(int x) {

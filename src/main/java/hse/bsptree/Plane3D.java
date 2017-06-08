@@ -21,7 +21,7 @@ public class Plane3D {
     double z;
     double w;
 
-    private final static double EPSILON = 0.002;
+    public static double EPSILON = 0.002;
 
     public Plane3D(Normal normal, Point3DDouble point) {
         x = normal.getX();
@@ -38,9 +38,6 @@ public class Plane3D {
 
         List<PointInfo> inPoints = new ArrayList<>();
         List<PointInfo> outPoints = new ArrayList<>();
-
-
-
 
         SideLocation currentLocation =  SideLocation.ON;
 
@@ -69,9 +66,7 @@ public class Plane3D {
                 if(pointADist < -EPSILON) {
                     Point3DDouble point = pointB.getPoint().minus(pointA.getPoint());
                     Normal pointNormal = pointB.getNormal().minus(pointA.getNormal());
-
                     double phi = -(this.multiple(pointA.getPoint())) / this.multiple(point);
-
 
                     Point3DDouble finalPoint = pointA.getPoint().plus((
                             point.multiple(
@@ -79,8 +74,7 @@ public class Plane3D {
                             ))
                     );
 
-                    Normal normal = pointA.getNormal().plus(pointNormal.multiple(phi));
-
+                    Normal normal = pointA.getNormal().plus(pointNormal.multiple((phi)));
                     PointInfo pointInfo = new PointInfo(finalPoint, pointB.getUvCoordinates(), normal, -1);
                     pointInfo.setTransformedNormal(normal);
                     outPoints.add(pointInfo);
@@ -97,7 +91,6 @@ public class Plane3D {
                 if (pointADist > EPSILON) {
                     Point3DDouble point = pointB.getPoint().minus(pointA.getPoint());
                     Normal pointNormal = pointB.getNormal().minus(pointA.getNormal());
-
                     double phi = -(this.multiple(pointA.getPoint())) / this.multiple(point);
 
 
@@ -137,7 +130,6 @@ public class Plane3D {
                 out = divade(new Side(outPoints));
                 break;
         }
-        System.out.println(currentLocation);
         return new Pair<>(currentLocation, new Pair<>(in, out));
     }
 

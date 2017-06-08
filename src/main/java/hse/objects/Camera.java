@@ -1,10 +1,7 @@
 package hse.objects;
 
-import hse.Setings;
 import hse.controllers.change.Direction;
 import hse.matrixes.Matrix;
-import org.omg.PortableInterceptor.INACTIVE;
-import sun.jvm.hotspot.utilities.IntArray;
 
 /**
  * Created by yuriy on 18.02.17.
@@ -101,4 +98,13 @@ public class Camera {
         return c.getValue(direction);
     }
 
+    public void clear() {
+        eye.setX(1d);
+        eye.setY(1d);
+        eye.setZ(3d);
+
+        c.setX(0d);
+        c.setY(0d);
+        c.setZ(0d);
+    }
 }

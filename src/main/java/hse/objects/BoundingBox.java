@@ -18,9 +18,9 @@ public class BoundingBox {
     }
 
     public  boolean isIn(Point3DInteger another) {
-return true;
-        //        return another.x >= a.x && another.y >= a.y &&
-//                another.x <= b.x && another.y <= b.y;
+        return another.x >= a.x && another.y >= a.y &&
+                another.x <= b.x && another.y <= b.y;
+//        return true;
     }
 
 

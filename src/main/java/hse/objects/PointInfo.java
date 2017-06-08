@@ -57,6 +57,22 @@ public class PointInfo {
         return transformedNormal;
     }
 
+    public PointInfo copy() {
+        PointInfo copy = new PointInfo(
+                this.getPoint().copy(),
+                this.getUvCoordinates().copy(),
+                this.getNormal().copy(),
+                index
+        );
+        if(this.getTransformedNormal() != null) {
+            copy.setTransformedNormal(this.getTransformedNormal().copy());
+        }
+        if(this.getTransformedPoint() != null) {
+            copy.setTransformedPoint(this.getTransformedPoint().copy());
+        }
+        return copy;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

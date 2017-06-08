@@ -9,6 +9,9 @@ import hse.matrixes.Projections;
  */
 public class Setings {
 
+    public static boolean IS_DEBUG = true;
+
+    public static int curentExperimentIndex = 0;
 
     public static int WINDOW_HEIGHT = 800;
     public static int WINDOW_WIDTH = 800;

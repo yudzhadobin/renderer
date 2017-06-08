@@ -1,20 +1,15 @@
 package hse.controllers;
 
 import hse.*;
-import hse.controllers.Task;
-import hse.light.FillType;
 import hse.matrixes.Matrix;
-import hse.matrixes.conversations.MoveMatrix;
-import hse.matrixes.conversations.RotationX;
-import hse.matrixes.conversations.RotationY;
-import hse.matrixes.conversations.RotationZ;
-import hse.matrixes.conversations.Scale;
+import hse.matrixes.conversations.*;
 import hse.objects.Object3D;
 import hse.objects.Side;
 import hse.ui.MainForm;
 import hse.ui.SwapChain;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
